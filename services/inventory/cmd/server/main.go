@@ -12,8 +12,14 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/osmanozen/oo-commerce/pkg/buildingblocks/messaging"
 	bbmiddleware "github.com/osmanozen/oo-commerce/pkg/buildingblocks/middleware"
+	inventoryevents "github.com/osmanozen/oo-commerce/services/inventory/internal/adapters/events"
+	inventoryhttp "github.com/osmanozen/oo-commerce/services/inventory/internal/adapters/http"
+	inventorypersistence "github.com/osmanozen/oo-commerce/services/inventory/internal/adapters/persistence"
+	"github.com/osmanozen/oo-commerce/services/inventory/internal/application/commands"
+	"github.com/osmanozen/oo-commerce/services/inventory/internal/application/queries"
 )
 
 func main() {
@@ -26,6 +32,7 @@ func main() {
 
 	port := envOrDefault("PORT", "8084")
 	kafkaBrokers := []string{envOrDefault("KAFKA_BROKERS", "localhost:9092")}
+	databaseURL := envOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/ocommerce?sslmode=disable")
 
 	// ─── Kafka ──────────────────────────────────────────────────────────
 	kafkaCfg := messaging.DefaultKafkaProducerConfig(kafkaBrokers)
@@ -51,10 +58,32 @@ func main() {
 	}
 
 	// ─── Database + Event Consumers ─────────────────────────────────────
-	// TODO: Initialize pgxpool, create repositories
-	// stockRepo := persistence.NewStockItemRepository(pool)
-	// eventConsumer := events.NewInventoryEventConsumer(stockRepo, kafkaConsumer, kafkaProducer, logger)
-	// eventConsumer.Start(ctx)
+	poolCfg, err := pgxpool.ParseConfig(databaseURL)
+	if err != nil {
+		logger.Error("failed to parse database url", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	pool, err := pgxpool.NewWithConfig(ctx, poolCfg)
+	if err != nil {
+		logger.Error("failed to initialize database pool", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	defer pool.Close()
+
+	pingCtx, pingCancel := context.WithTimeout(ctx, 5*time.Second)
+	defer pingCancel()
+	if err := pool.Ping(pingCtx); err != nil {
+		logger.Error("database ping failed", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+
+	stockRepo := inventorypersistence.NewStockItemRepository(pool, logger)
+
+	eventConsumer := inventoryevents.NewInventoryEventConsumer(stockRepo, kafkaConsumer, kafkaProducer, logger)
+	if err := eventConsumer.Start(ctx); err != nil {
+		logger.Error("failed to start inventory event consumers", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
 
 	// Background job: clean up expired reservations
 	go func() {
@@ -65,8 +94,14 @@ func main() {
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				// TODO: stockRepo.CleanupExpiredReservations(ctx)
-				logger.Debug("reservation cleanup tick")
+				deleted, err := stockRepo.CleanupExpiredReservations(ctx)
+				if err != nil {
+					logger.Error("failed to cleanup expired reservations", slog.String("error", err.Error()))
+					continue
+				}
+				if deleted > 0 {
+					logger.Info("expired reservations cleaned", slog.Int64("count", deleted))
+				}
 			}
 		}
 	}()
@@ -87,7 +122,17 @@ func main() {
 		fmt.Fprint(w, `{"status":"healthy","service":"inventory"}`)
 	})
 
-	// TODO: Register stock handler routes
+	adjustStockHandler := commands.NewAdjustStockHandler(stockRepo)
+	getStockHandler := queries.NewGetStockHandler(stockRepo)
+	getStockLevelsHandler := queries.NewGetStockLevelsHandler(stockRepo)
+
+	stockHTTPHandler := inventoryhttp.NewStockHandler(
+		adjustStockHandler,
+		getStockHandler,
+		getStockLevelsHandler,
+		logger,
+	)
+	stockHTTPHandler.RegisterRoutes(r)
 
 	server := &http.Server{
 		Addr:         ":" + port,

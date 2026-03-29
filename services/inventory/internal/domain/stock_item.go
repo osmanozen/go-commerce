@@ -28,6 +28,10 @@ func StockItemIDFromString(s string) (StockItemID, error) {
 	return types.TypedIDFromString[stockItemTag](s)
 }
 
+func AdjustmentIDFromString(s string) (AdjustmentID, error) {
+	return types.TypedIDFromString[adjustmentTag](s)
+}
+
 // ─── Stock Reservation (Owned Entity) ────────────────────────────────────────
 
 // StockReservation represents a temporary hold on stock with TTL.

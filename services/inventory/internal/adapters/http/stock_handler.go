@@ -58,7 +58,7 @@ func (h *StockHandler) HandleAdjustStock(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	cmd.ProductID = chi.URLParam(r, "productId")
-	cmd.CreatedBy = "admin" // TODO: extract from JWT
+	cmd.CreatedBy = extractCreatedBy(r)
 
 	_, err := h.adjustStock.Handle(r.Context(), cmd)
 	if err != nil {
@@ -66,6 +66,13 @@ func (h *StockHandler) HandleAdjustStock(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func extractCreatedBy(r *http.Request) string {
+	if uid := r.Header.Get("X-User-ID"); uid != "" {
+		return uid
+	}
+	return "system"
 }
 
 func (h *StockHandler) HandleGetStockLevels(w http.ResponseWriter, r *http.Request) {
