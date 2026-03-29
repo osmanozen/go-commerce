@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"context"
 	"errors"
 	"time"
 
@@ -27,17 +28,21 @@ func WishlistItemIDFromString(s string) (WishlistItemID, error) {
 type WishlistItem struct {
 	bbdomain.BaseAggregateRoot
 	bbdomain.Auditable
+	bbdomain.Versionable
 
 	ID        WishlistItemID `json:"id" db:"id"`
-	UserID    string         `json:"userId" db:"user_id"`
+	UserID    uuid.UUID      `json:"userId" db:"user_id"`
 	ProductID uuid.UUID      `json:"productId" db:"product_id"`
 	AddedAt   time.Time      `json:"addedAt" db:"added_at"`
 }
 
 // NewWishlistItem creates a new wishlist item.
-func NewWishlistItem(userID string, productID uuid.UUID) (*WishlistItem, error) {
-	if userID == "" {
-		return nil, errors.New("user id is required")
+func NewWishlistItem(userID uuid.UUID, productID uuid.UUID) (*WishlistItem, error) {
+	if userID == uuid.Nil {
+		return nil, errors.New("user id cannot be nil")
+	}
+	if productID == uuid.Nil {
+		return nil, errors.New("product id cannot be nil")
 	}
 
 	item := &WishlistItem{
@@ -53,10 +58,9 @@ func NewWishlistItem(userID string, productID uuid.UUID) (*WishlistItem, error) 
 // ─── Repository ──────────────────────────────────────────────────────────────
 
 type WishlistRepository interface {
-	Add(ctx interface{}, item *WishlistItem) error
-	Remove(ctx interface{}, userID string, productID uuid.UUID) error
-	GetByUserID(ctx interface{}, userID string, offset, limit int) ([]WishlistItem, int, error)
-	Exists(ctx interface{}, userID string, productID uuid.UUID) (bool, error)
-	// BatchLookup returns which of the given product IDs the user has wishlisted.
-	BatchLookup(ctx interface{}, userID string, productIDs []uuid.UUID) (map[uuid.UUID]bool, error)
+	Add(ctx context.Context, item *WishlistItem) (*WishlistItem, error)
+	Remove(ctx context.Context, userID, productID uuid.UUID) error
+	GetByUserID(ctx context.Context, userID uuid.UUID) ([]WishlistItem, error)
+	CountByUserID(ctx context.Context, userID uuid.UUID) (int, error)
+	GetProductIDsByUserID(ctx context.Context, userID uuid.UUID) ([]uuid.UUID, error)
 }

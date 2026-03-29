@@ -12,7 +12,12 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/jackc/pgx/v5/pgxpool"
 	bbmiddleware "github.com/osmanozen/oo-commerce/pkg/buildingblocks/middleware"
+	wishlisthttp "github.com/osmanozen/oo-commerce/services/wishlists/internal/adapters/http"
+	wishlistpersistence "github.com/osmanozen/oo-commerce/services/wishlists/internal/adapters/persistence"
+	"github.com/osmanozen/oo-commerce/services/wishlists/internal/application/commands"
+	"github.com/osmanozen/oo-commerce/services/wishlists/internal/application/queries"
 )
 
 func main() {
@@ -24,6 +29,27 @@ func main() {
 	logger.Info("wishlists service starting", slog.String("version", "1.0.0"))
 
 	port := envOrDefault("PORT", "8087")
+	databaseURL := envOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/ocommerce?sslmode=disable")
+
+	ctx := context.Background()
+	poolCfg, err := pgxpool.ParseConfig(databaseURL)
+	if err != nil {
+		logger.Error("failed to parse database url", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	pool, err := pgxpool.NewWithConfig(ctx, poolCfg)
+	if err != nil {
+		logger.Error("failed to initialize database pool", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	defer pool.Close()
+
+	pingCtx, pingCancel := context.WithTimeout(ctx, 5*time.Second)
+	defer pingCancel()
+	if err := pool.Ping(pingCtx); err != nil {
+		logger.Error("database ping failed", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
 
 	r := chi.NewRouter()
 	r.Use(chimiddleware.RequestID)
@@ -39,6 +65,25 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, `{"status":"healthy","service":"wishlists"}`)
 	})
+
+	repo := wishlistpersistence.NewWishlistRepository(pool)
+	catalogReader := wishlistpersistence.NewCatalogReader(pool)
+	inventoryReader := wishlistpersistence.NewInventoryReader(pool)
+
+	getWishlist := queries.NewGetUserWishlistHandler(repo, catalogReader, inventoryReader)
+	getCount := queries.NewGetWishlistCountHandler(repo)
+	getProductIDs := queries.NewGetWishlistProductIDsHandler(repo)
+	addToWishlist := commands.NewAddToWishlistHandler(repo)
+	removeFromWishlist := commands.NewRemoveFromWishlistHandler(repo)
+
+	wishlistHandler := wishlisthttp.NewWishlistHandler(
+		getWishlist,
+		getCount,
+		getProductIDs,
+		addToWishlist,
+		removeFromWishlist,
+	)
+	wishlistHandler.RegisterRoutes(r)
 
 	server := &http.Server{
 		Addr:         ":" + port,
