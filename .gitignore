@@ -1,0 +1,29 @@
+# Go binaries and artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+*.test
+*.out
+coverage.out
+coverage.html
+
+# Dependencies
+vendor/
+go.work.sum
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Env
+.env
+.env.local
+.env.*.local
+
