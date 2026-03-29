@@ -1,0 +1,13 @@
+go 1.26.1
+
+use (
+	./pkg/buildingblocks
+	./services/catalog
+	./services/cart
+	./services/ordering
+	./services/inventory
+	./services/profiles
+	./services/reviews
+	./services/wishlists
+	./services/coupons
+)

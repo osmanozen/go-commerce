@@ -1,0 +1,37 @@
+# Multi-stage Dockerfile for Go microservices
+# Usage: docker build --build-arg SERVICE=catalog -f infra/docker/Dockerfile.service .
+
+# ─── Stage 1: Build ──────────────────────────────────────────────────────────
+FROM golang:1.26-alpine AS builder
+
+ARG SERVICE
+
+RUN apk add --no-cache git ca-certificates
+
+WORKDIR /app
+
+# Copy workspace files
+COPY go.work go.work.sum ./
+COPY pkg/ pkg/
+COPY services/${SERVICE}/ services/${SERVICE}/
+
+# Download dependencies
+RUN cd services/${SERVICE} && go mod download
+
+# Build the service binary
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -ldflags="-s -w" \
+    -o /bin/service \
+    ./services/${SERVICE}/cmd/server/
+
+# ─── Stage 2: Runtime (distroless) ───────────────────────────────────────────
+FROM gcr.io/distroless/static-debian12:nonroot
+
+COPY --from=builder /bin/service /service
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+USER nonroot:nonroot
+
+EXPOSE 8080
+
+ENTRYPOINT ["/service"]
