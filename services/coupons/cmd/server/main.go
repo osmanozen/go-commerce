@@ -14,6 +14,10 @@ import (
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/osmanozen/oo-commerce/pkg/buildingblocks/messaging"
 	bbmiddleware "github.com/osmanozen/oo-commerce/pkg/buildingblocks/middleware"
+	couponhttp "github.com/osmanozen/oo-commerce/services/coupons/internal/adapters/http"
+	couponpersistence "github.com/osmanozen/oo-commerce/services/coupons/internal/adapters/persistence"
+	"github.com/osmanozen/oo-commerce/services/coupons/internal/application/commands"
+	"github.com/osmanozen/oo-commerce/services/coupons/internal/application/queries"
 )
 
 func main() {
@@ -45,6 +49,24 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, `{"status":"healthy","service":"coupons"}`)
 	})
+
+	couponRepo := couponpersistence.NewInMemoryCouponRepository()
+	createCoupon := commands.NewCreateCouponHandler(couponRepo)
+	updateCoupon := commands.NewUpdateCouponHandler(couponRepo)
+	toggleCouponStatus := commands.NewToggleCouponStatusHandler(couponRepo)
+	getCoupons := queries.NewGetCouponsHandler(couponRepo)
+	getCouponByID := queries.NewGetCouponByIDHandler(couponRepo)
+	validateCoupon := queries.NewValidateCouponHandler(couponRepo)
+
+	couponHandler := couponhttp.NewCouponHandler(
+		createCoupon,
+		updateCoupon,
+		toggleCouponStatus,
+		getCoupons,
+		getCouponByID,
+		validateCoupon,
+	)
+	couponHandler.RegisterRoutes(r)
 
 	server := &http.Server{
 		Addr:         ":" + port,
