@@ -30,6 +30,9 @@ func ProductIDFromString(s string) (ProductID, error) { return types.TypedIDFrom
 func CategoryIDFromString(s string) (CategoryID, error) {
 	return types.TypedIDFromString[categoryTag](s)
 }
+func ProductImageIDFromString(s string) (ProductImageID, error) {
+	return types.TypedIDFromString[productImageTag](s)
+}
 
 // ─── Value Objects ───────────────────────────────────────────────────────────
 

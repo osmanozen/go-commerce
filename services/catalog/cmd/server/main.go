@@ -12,8 +12,13 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/osmanozen/oo-commerce/pkg/buildingblocks/messaging"
 	bbmiddleware "github.com/osmanozen/oo-commerce/pkg/buildingblocks/middleware"
+	cataloghttp "github.com/osmanozen/oo-commerce/services/catalog/internal/adapters/http"
+	catalogpersistence "github.com/osmanozen/oo-commerce/services/catalog/internal/adapters/persistence"
+	"github.com/osmanozen/oo-commerce/services/catalog/internal/application/commands"
+	"github.com/osmanozen/oo-commerce/services/catalog/internal/application/queries"
 )
 
 func main() {
@@ -31,7 +36,7 @@ func main() {
 	// ─── Configuration ──────────────────────────────────────────────────
 	port := envOrDefault("PORT", "8081")
 	kafkaBrokers := []string{envOrDefault("KAFKA_BROKERS", "localhost:9092")}
-	_ = envOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/ocommerce?sslmode=disable")
+	databaseURL := envOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/ocommerce?sslmode=disable")
 
 	// ─── Kafka Producer ─────────────────────────────────────────────────
 	kafkaCfg := messaging.DefaultKafkaProducerConfig(kafkaBrokers)
@@ -50,8 +55,58 @@ func main() {
 	}
 
 	// ─── Database + Repositories ────────────────────────────────────────
-	// TODO: Initialize pgxpool, create repositories, wire CQRS handlers.
-	// This is where the DI wiring happens — all in main.go, explicit.
+	poolCfg, err := pgxpool.ParseConfig(databaseURL)
+	if err != nil {
+		logger.Error("failed to parse database url", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	pool, err := pgxpool.NewWithConfig(ctx, poolCfg)
+	if err != nil {
+		logger.Error("failed to initialize database pool", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	defer pool.Close()
+
+	pingCtx, pingCancel := context.WithTimeout(ctx, 5*time.Second)
+	defer pingCancel()
+	if err := pool.Ping(pingCtx); err != nil {
+		logger.Error("database ping failed", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+
+	categoryRepo := catalogpersistence.NewCategoryRepository(pool, logger)
+	productRepo := catalogpersistence.NewProductRepository(pool, logger)
+
+	createCategory := commands.NewCreateCategoryHandler(categoryRepo)
+	updateCategory := commands.NewUpdateCategoryHandler(categoryRepo)
+	deleteCategory := commands.NewDeleteCategoryHandler(categoryRepo)
+	getCategories := queries.NewGetCategoriesHandler(categoryRepo)
+	getCategoryByID := queries.NewGetCategoryByIdHandler(categoryRepo)
+
+	createProduct := commands.NewCreateProductHandler(productRepo, categoryRepo)
+	updateProduct := commands.NewUpdateProductHandler(productRepo, categoryRepo)
+	deleteProduct := commands.NewDeleteProductHandler(productRepo)
+	updateReviewStats := commands.NewUpdateReviewStatsHandler(productRepo)
+	getProducts := queries.NewGetProductsHandler(productRepo)
+	getProductByID := queries.NewGetProductByIDHandler(productRepo)
+
+	categoryHandler := cataloghttp.NewCategoryHandler(
+		createCategory,
+		updateCategory,
+		deleteCategory,
+		getCategories,
+		getCategoryByID,
+		logger,
+	)
+	productHandler := cataloghttp.NewProductHandler(
+		createProduct,
+		updateProduct,
+		deleteProduct,
+		updateReviewStats,
+		getProducts,
+		getProductByID,
+		logger,
+	)
 
 	// ─── HTTP Router ────────────────────────────────────────────────────
 	r := chi.NewRouter()
@@ -72,9 +127,8 @@ func main() {
 		fmt.Fprint(w, `{"status":"healthy","service":"catalog"}`)
 	})
 
-	// TODO: Register product and category handlers.
-	// productHandler.RegisterRoutes(r)
-	// categoryHandler.RegisterRoutes(r)
+	categoryHandler.RegisterRoutes(r)
+	productHandler.RegisterRoutes(r)
 
 	// ─── HTTP Server ────────────────────────────────────────────────────
 	server := &http.Server{
