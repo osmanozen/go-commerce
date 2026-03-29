@@ -1,77 +1,26 @@
 {
   "info": {
-    "_postman_id": "b3e04cf4-f2a8-4448-9189-54fb0b5b1234",
-    "name": "OO-Commerce Microservices",
-    "description": "High-traffic E-Commerce Microservices API Collection, based on Go, DDD, and CQRS.",
+    "_postman_id": "7a0f36b8-77d8-4722-ae8b-8f2b15f0a61f",
+    "name": "OO-Commerce Microservices (All Services)",
+    "description": "Regenerated Postman collection for all OO-Commerce microservices running on Docker.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "1. Catalog Service (8081)",
-      "description": "Product and category management queries and commands.",
+      "name": "Catalog Service (8081)",
       "item": [
         {
-          "name": "Health Check",
+          "name": "Health",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8081/health",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8081",
-              "path": ["health"]
-            }
+            "url": "{{catalog_base}}/health"
           }
         },
         {
-          "name": "Create Product",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Sony PlayStation 5 Pro\",\n  \"description\": \"Next gen console with ultra high-speed SSD.\",\n  \"sku\": \"SONY-PS5-PRO-01\",\n  \"priceAmount\": 29999.00,\n  \"priceCurrency\": \"TRY\",\n  \"categoryId\": \"e-1234-abcd-5678\"\n}"
-            },
-            "url": {
-              "raw": "http://localhost:8081/api/catalog/products",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8081",
-              "path": ["api", "catalog", "products"]
-            }
-          }
-        },
-        {
-          "name": "Get Product by ID",
+          "name": "List Categories",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8081/api/catalog/products/{{product_id}}",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8081",
-              "path": ["api", "catalog", "products", "{{product_id}}"]
-            }
-          }
-        },
-        {
-          "name": "List Products",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8081/api/catalog/products?page=1&pageSize=20",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8081",
-              "path": ["api", "catalog", "products"],
-              "query": [
-                { "key": "page", "value": "1" },
-                { "key": "pageSize", "value": "20" }
-              ]
-            }
+            "url": "{{catalog_base}}/api/catalog/categories/"
           }
         },
         {
@@ -81,133 +30,112 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Electronics\",\n  \"description\": \"Electronic devices and accessories\"\n}"
+              "raw": "{\n  \"name\": \"Electronics\",\n  \"description\": \"Electronic devices\"\n}"
             },
-            "url": {
-              "raw": "http://localhost:8081/api/catalog/categories",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8081",
-              "path": ["api", "catalog", "categories"]
-            }
+            "url": "{{catalog_base}}/api/catalog/categories/"
           }
         },
         {
-          "name": "Get Category by ID",
+          "name": "Get Category By ID",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8081/api/catalog/categories/{{category_id}}",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8081",
-              "path": ["api", "catalog", "categories", "{{category_id}}"]
-            }
+            "url": "{{catalog_base}}/api/catalog/categories/{{category_id}}"
           }
         },
         {
-          "name": "List Categories",
+          "name": "Update Category",
           "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8081/api/catalog/categories",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8081",
-              "path": ["api", "catalog", "categories"]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "2. Inventory Service (8084)",
-      "description": "Stock levels, TTL reservations and adjustment operations.",
-      "item": [
-        {
-          "name": "Health Check",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8084/health",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8084",
-              "path": ["health"]
-            }
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Electronics & Gadgets\",\n  \"description\": \"Updated category description\"\n}"
+            },
+            "url": "{{catalog_base}}/api/catalog/categories/{{category_id}}"
           }
         },
         {
-          "name": "Adjust Stock (Add Stock)",
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "url": "{{catalog_base}}/api/catalog/categories/{{category_id}}"
+          }
+        },
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "url": "{{catalog_base}}/api/catalog/products/?page=1&pageSize=12"
+          }
+        },
+        {
+          "name": "Create Product",
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"adjustmentType\": 1,\n  \"quantity\": 100,\n  \"reason\": \"Initial warehouse stocking\"\n}"
+              "raw": "{\n  \"name\": \"Sony PlayStation 5\",\n  \"description\": \"Game console\",\n  \"sku\": \"PS5-001\",\n  \"priceAmount\": 29999,\n  \"priceCurrency\": \"TRY\",\n  \"categoryId\": \"{{category_id}}\"\n}"
             },
-            "url": {
-              "raw": "http://localhost:8084/api/inventory/stock/{{product_id}}/adjust",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8084",
-              "path": ["api", "inventory", "stock", "{{product_id}}", "adjust"]
-            }
+            "url": "{{catalog_base}}/api/catalog/products/"
           }
         },
         {
-          "name": "Get Stock Level",
+          "name": "Get Product By ID",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8084/api/inventory/stock/{{product_id}}",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8084",
-              "path": ["api", "inventory", "stock", "{{product_id}}"]
-            }
+            "url": "{{catalog_base}}/api/catalog/products/{{product_id}}"
           }
         },
         {
-          "name": "Batch Get Stock Levels",
+          "name": "Update Product",
           "request": {
-            "method": "POST",
+            "method": "PUT",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"productIds\": [\n    \"{{product_id}}\"\n  ]\n}"
+              "raw": "{\n  \"name\": \"Sony PlayStation 5 Slim\",\n  \"description\": \"Updated model\",\n  \"sku\": \"PS5-001\",\n  \"priceAmount\": 28999,\n  \"priceCurrency\": \"TRY\",\n  \"categoryId\": \"{{category_id}}\"\n}"
             },
-            "url": {
-              "raw": "http://localhost:8084/api/inventory/stock/levels",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8084",
-              "path": ["api", "inventory", "stock", "levels"]
-            }
+            "url": "{{catalog_base}}/api/catalog/products/{{product_id}}"
+          }
+        },
+        {
+          "name": "Patch Product Review Stats",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ratingAverage\": 4.6,\n  \"ratingCount\": 120\n}"
+            },
+            "url": "{{catalog_base}}/api/catalog/products/{{product_id}}/review-stats"
+          }
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "url": "{{catalog_base}}/api/catalog/products/{{product_id}}"
           }
         }
       ]
     },
     {
-      "name": "3. Cart Service (8082)",
-      "description": "Shopping cart interactions and guest to user merging.",
+      "name": "Cart Service (8082)",
       "item": [
         {
-          "name": "Health Check",
+          "name": "Health",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8082/health",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8082",
-              "path": ["health"]
-            }
+            "url": "{{cart_base}}/health"
+          }
+        },
+        {
+          "name": "Get Cart",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{cart_base}}/api/cart/"
           }
         },
         {
@@ -216,178 +144,503 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Guest-ID", "value": "guest-87asjdha8s7", "description": "Mock ID for unauthenticated users." }
+              { "key": "X-User-ID", "value": "{{user_id}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"productId\": \"{{product_id}}\",\n  \"productName\": \"Sony PlayStation 5 Pro\",\n  \"unitPrice\": 29999.00,\n  \"currency\": \"TRY\",\n  \"quantity\": 1\n}"
+              "raw": "{\n  \"productId\": \"{{product_id}}\",\n  \"productName\": \"Sony PlayStation 5\",\n  \"unitPrice\": 29999,\n  \"currency\": \"TRY\",\n  \"quantity\": 1\n}"
             },
-            "url": {
-              "raw": "http://localhost:8082/api/cart/items",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8082",
-              "path": ["api", "cart", "items"]
-            }
+            "url": "{{cart_base}}/api/cart/items/"
           }
         },
         {
-          "name": "Remove Item from Cart",
+          "name": "Update Cart Item Quantity",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-User-ID", "value": "{{user_id}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 2\n}"
+            },
+            "url": "{{cart_base}}/api/cart/items/{{cart_item_id}}"
+          }
+        },
+        {
+          "name": "Remove Cart Item",
           "request": {
             "method": "DELETE",
-            "header": [
-              { "key": "X-Guest-ID", "value": "guest-87asjdha8s7" }
-            ],
-            "url": {
-              "raw": "http://localhost:8082/api/cart/items/{{cart_item_id}}",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8082",
-              "path": ["api", "cart", "items", "{{cart_item_id}}"]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "4. Ordering Service (8083)",
-      "description": "Trigger checkout Saga and handle distributed transaction tracking.",
-      "item": [
-        {
-          "name": "Health Check",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8083/health",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8083",
-              "path": ["health"]
-            }
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{cart_base}}/api/cart/items/{{cart_item_id}}"
           }
         },
         {
-          "name": "Checkout Order",
+          "name": "Clear Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{cart_base}}/api/cart/"
+          }
+        },
+        {
+          "name": "Merge Guest Cart",
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-User-ID", "value": "user-auth-token-123" }
+              { "key": "X-User-ID", "value": "{{user_id}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"cartId\": \"{{cart_id}}\",\n  \"paymentMethodId\": \"pm_1234\",\n  \"shippingAddress\": {\n    \"firstName\": \"Osman\",\n    \"lastName\": \"Özen\",\n    \"street\": \"Teknoloji Caddesi 1453\",\n    \"city\": \"Istanbul\",\n    \"country\": \"Turkey\",\n    \"zipCode\": \"34000\"\n  },\n  \"billingAddress\": {\n    \"firstName\": \"Osman\",\n    \"lastName\": \"Özen\",\n    \"street\": \"Teknoloji Caddesi 1453\",\n    \"city\": \"Istanbul\",\n    \"country\": \"Turkey\",\n    \"zipCode\": \"34000\"\n  }\n}"
+              "raw": "{\n  \"guestBuyerId\": \"{{guest_id}}\"\n}"
             },
-            "url": {
-              "raw": "http://localhost:8083/api/ordering/checkout",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8083",
-              "path": ["api", "ordering", "checkout"]
-            }
-          }
-        },
-        {
-          "name": "Get Order Details",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8083/api/ordering/orders/{{order_id}}",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8083",
-              "path": ["api", "ordering", "orders", "{{order_id}}"]
-            }
+            "url": "{{cart_base}}/api/cart/merge"
           }
         }
       ]
     },
     {
-      "name": "5. Shared Context Services",
-      "description": "Profiles, Reviews, Wishlists, and Coupons Microservices.",
+      "name": "Ordering Service (8083)",
       "item": [
         {
-          "name": "Health - Profiles (8085)",
+          "name": "Health",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": {
-               "raw": "http://localhost:8085/health",
-               "host": ["localhost"],
-               "port": "8085",
-               "path": ["health"]
-            }
+            "url": "{{ordering_base}}/health"
           }
         },
         {
-          "name": "Health - Reviews (8086)",
+          "name": "Checkout",
           "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-               "raw": "http://localhost:8086/health",
-               "host": ["localhost"],
-               "port": "8086",
-               "path": ["health"]
-            }
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-User-ID", "value": "{{user_id}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paymentMethodId\": \"pm_demo_1\",\n  \"shippingAddress\": {\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"street\": \"Street 1\",\n    \"city\": \"Istanbul\",\n    \"country\": \"TR\",\n    \"zipCode\": \"34000\"\n  },\n  \"billingAddress\": {\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"street\": \"Street 1\",\n    \"city\": \"Istanbul\",\n    \"country\": \"TR\",\n    \"zipCode\": \"34000\"\n  }\n}"
+            },
+            "url": "{{ordering_base}}/api/ordering/checkout"
           }
         },
         {
-          "name": "Health - Wishlists (8087)",
+          "name": "Get My Orders",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": {
-               "raw": "http://localhost:8087/health",
-               "host": ["localhost"],
-               "port": "8087",
-               "path": ["health"]
-            }
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{ordering_base}}/api/ordering/orders/?page=1&pageSize=10"
           }
         },
         {
-          "name": "Health - Coupons (8088)",
+          "name": "Get Order By ID",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": {
-               "raw": "http://localhost:8088/health",
-               "host": ["localhost"],
-               "port": "8088",
-               "path": ["health"]
-            }
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{ordering_base}}/api/ordering/orders/{{order_id}}"
+          }
+        },
+        {
+          "name": "Cancel Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-User-ID", "value": "{{user_id}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Customer requested cancellation\"\n}"
+            },
+            "url": "{{ordering_base}}/api/ordering/orders/{{order_id}}/cancel"
+          }
+        },
+        {
+          "name": "Simulate Payment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"success\": true,\n  \"failureReason\": \"\"\n}"
+            },
+            "url": "{{ordering_base}}/api/ordering/orders/{{order_id}}/pay"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventory Service (8084)",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "url": "{{inventory_base}}/health"
+          }
+        },
+        {
+          "name": "Get Stock By Product",
+          "request": {
+            "method": "GET",
+            "url": "{{inventory_base}}/api/inventory/stock/{{product_id}}"
+          }
+        },
+        {
+          "name": "Adjust Stock",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-User-ID", "value": "{{user_id}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"adjustmentType\": 1,\n  \"quantity\": 50,\n  \"reason\": \"Initial load\"\n}"
+            },
+            "url": "{{inventory_base}}/api/inventory/stock/{{product_id}}/adjust"
+          }
+        },
+        {
+          "name": "Get Stock Levels (Batch)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productIds\": [\n    \"{{product_id}}\"\n  ]\n}"
+            },
+            "url": "{{inventory_base}}/api/inventory/stock/levels"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profiles Service (8085)",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "url": "{{profiles_base}}/health"
+          }
+        },
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{profiles_base}}/api/profiles/me/"
+          }
+        },
+        {
+          "name": "Update My Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-User-ID", "value": "{{user_id}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"phone\": \"+905551112233\"\n}"
+            },
+            "url": "{{profiles_base}}/api/profiles/me/"
+          }
+        },
+        {
+          "name": "Upload Avatar (multipart/form-data)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": "{{profiles_base}}/api/profiles/me/avatar"
+          }
+        },
+        {
+          "name": "Remove Avatar",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{profiles_base}}/api/profiles/me/avatar"
+          }
+        },
+        {
+          "name": "Add Address",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-User-ID", "value": "{{user_id}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Home\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"line1\": \"Street 1\",\n  \"city\": \"Istanbul\",\n  \"country\": \"TR\",\n  \"postalCode\": \"34000\"\n}"
+            },
+            "url": "{{profiles_base}}/api/profiles/me/addresses"
+          }
+        },
+        {
+          "name": "Update Address",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-User-ID", "value": "{{user_id}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Office\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"line1\": \"Street 2\",\n  \"city\": \"Istanbul\",\n  \"country\": \"TR\",\n  \"postalCode\": \"34000\"\n}"
+            },
+            "url": "{{profiles_base}}/api/profiles/me/addresses/{{address_id}}"
+          }
+        },
+        {
+          "name": "Delete Address",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{profiles_base}}/api/profiles/me/addresses/{{address_id}}"
+          }
+        },
+        {
+          "name": "Set Default Address",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{profiles_base}}/api/profiles/me/addresses/{{address_id}}/default"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews Service (8086)",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "url": "{{reviews_base}}/health"
+          }
+        },
+        {
+          "name": "List Reviews By Product",
+          "request": {
+            "method": "GET",
+            "url": "{{reviews_base}}/api/reviews/products/{{product_id}}/?page=1&pageSize=10"
+          }
+        },
+        {
+          "name": "Get My Review For Product",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{reviews_base}}/api/reviews/products/{{product_id}}/mine"
+          }
+        },
+        {
+          "name": "Can I Review Product",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{reviews_base}}/api/reviews/products/{{product_id}}/can-review"
+          }
+        },
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-User-ID", "value": "{{user_id}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"text\": \"Great product\"\n}"
+            },
+            "url": "{{reviews_base}}/api/reviews/products/{{product_id}}/"
+          }
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-User-ID", "value": "{{user_id}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"text\": \"Updated comment\"\n}"
+            },
+            "url": "{{reviews_base}}/api/reviews/{{review_id}}"
+          }
+        },
+        {
+          "name": "Delete Review",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{reviews_base}}/api/reviews/{{review_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wishlists Service (8087)",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "url": "{{wishlists_base}}/health"
+          }
+        },
+        {
+          "name": "Get Wishlist",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{wishlists_base}}/api/wishlist/"
+          }
+        },
+        {
+          "name": "Get Wishlist Count",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{wishlists_base}}/api/wishlist/count"
+          }
+        },
+        {
+          "name": "Get Wishlist Product IDs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{wishlists_base}}/api/wishlist/product-ids"
+          }
+        },
+        {
+          "name": "Add To Wishlist",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{wishlists_base}}/api/wishlist/{{product_id}}"
+          }
+        },
+        {
+          "name": "Remove From Wishlist",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "url": "{{wishlists_base}}/api/wishlist/{{product_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Coupons Service (8088)",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "url": "{{coupons_base}}/health"
+          }
+        },
+        {
+          "name": "Create Coupon",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"WELCOME10\",\n  \"name\": \"Welcome Discount\",\n  \"description\": \"First order discount\",\n  \"discountType\": 1,\n  \"discountValue\": 10,\n  \"currency\": \"TRY\"\n}"
+            },
+            "url": "{{coupons_base}}/api/coupons/"
+          }
+        },
+        {
+          "name": "List Coupons",
+          "request": {
+            "method": "GET",
+            "url": "{{coupons_base}}/api/coupons/?page=1&pageSize=20&isActive=true"
+          }
+        },
+        {
+          "name": "Get Coupon By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{coupons_base}}/api/coupons/{{coupon_id}}"
+          }
+        },
+        {
+          "name": "Update Coupon",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Welcome Discount Updated\",\n  \"description\": \"Updated description\",\n  \"discountType\": 1,\n  \"discountValue\": 15,\n  \"currency\": \"TRY\"\n}"
+            },
+            "url": "{{coupons_base}}/api/coupons/{{coupon_id}}"
+          }
+        },
+        {
+          "name": "Toggle Coupon Status",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}"
+            },
+            "url": "{{coupons_base}}/api/coupons/{{coupon_id}}/status"
+          }
+        },
+        {
+          "name": "Validate Coupon",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"WELCOME10\",\n  \"cartTotal\": 500\n}"
+            },
+            "url": "{{coupons_base}}/api/coupons/validate"
           }
         }
       ]
     }
   ],
   "variable": [
-    {
-      "key": "product_id",
-      "value": "INSERT_GENERATED_PRODUCT_UUID_HERE",
-      "type": "string"
-    },
-    {
-      "key": "category_id",
-      "value": "INSERT_GENERATED_CATEGORY_UUID_HERE",
-      "type": "string"
-    },
-    {
-      "key": "cart_id",
-      "value": "INSERT_GENERATED_CART_UUID_HERE",
-      "type": "string"
-    },
-    {
-      "key": "cart_item_id",
-      "value": "INSERT_GENERATED_CART_ITEM_UUID_HERE",
-      "type": "string"
-    },
-    {
-      "key": "order_id",
-      "value": "INSERT_GENERATED_ORDER_UUID_HERE",
-      "type": "string"
-    }
+    { "key": "catalog_base", "value": "http://localhost:8081" },
+    { "key": "cart_base", "value": "http://localhost:8082" },
+    { "key": "ordering_base", "value": "http://localhost:8083" },
+    { "key": "inventory_base", "value": "http://localhost:8084" },
+    { "key": "profiles_base", "value": "http://localhost:8085" },
+    { "key": "reviews_base", "value": "http://localhost:8086" },
+    { "key": "wishlists_base", "value": "http://localhost:8087" },
+    { "key": "coupons_base", "value": "http://localhost:8088" },
+    { "key": "user_id", "value": "user-123" },
+    { "key": "guest_id", "value": "guest-123" },
+    { "key": "category_id", "value": "00000000-0000-0000-0000-000000000001" },
+    { "key": "product_id", "value": "00000000-0000-0000-0000-000000000002" },
+    { "key": "cart_item_id", "value": "00000000-0000-0000-0000-000000000003" },
+    { "key": "order_id", "value": "00000000-0000-0000-0000-000000000004" },
+    { "key": "review_id", "value": "00000000-0000-0000-0000-000000000005" },
+    { "key": "address_id", "value": "00000000-0000-0000-0000-000000000006" },
+    { "key": "coupon_id", "value": "00000000-0000-0000-0000-000000000007" }
   ]
 }
