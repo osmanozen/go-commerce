@@ -14,6 +14,10 @@ import (
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/osmanozen/oo-commerce/pkg/buildingblocks/messaging"
 	bbmiddleware "github.com/osmanozen/oo-commerce/pkg/buildingblocks/middleware"
+	profileshttp "github.com/osmanozen/oo-commerce/services/profiles/internal/adapters/http"
+	profilespersistence "github.com/osmanozen/oo-commerce/services/profiles/internal/adapters/persistence"
+	"github.com/osmanozen/oo-commerce/services/profiles/internal/application/commands"
+	"github.com/osmanozen/oo-commerce/services/profiles/internal/application/queries"
 )
 
 func main() {
@@ -45,6 +49,28 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, `{"status":"healthy","service":"profiles"}`)
 	})
+
+	profileRepo := profilespersistence.NewInMemoryProfileRepository()
+	getProfile := queries.NewGetProfileHandler(profileRepo)
+	updateProfile := commands.NewUpdateProfileHandler(profileRepo)
+	uploadAvatar := commands.NewUploadAvatarHandler(profileRepo)
+	removeAvatar := commands.NewRemoveAvatarHandler(profileRepo)
+	addAddress := commands.NewAddAddressHandler(profileRepo)
+	updateAddress := commands.NewUpdateAddressHandler(profileRepo)
+	deleteAddress := commands.NewDeleteAddressHandler(profileRepo)
+	setDefaultAddress := commands.NewSetDefaultAddressHandler(profileRepo)
+
+	profileHandler := profileshttp.NewProfileHandler(
+		getProfile,
+		updateProfile,
+		uploadAvatar,
+		removeAvatar,
+		addAddress,
+		updateAddress,
+		deleteAddress,
+		setDefaultAddress,
+	)
+	profileHandler.RegisterRoutes(r)
 
 	server := &http.Server{
 		Addr:         ":" + port,
