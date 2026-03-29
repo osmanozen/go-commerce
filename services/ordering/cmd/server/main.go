@@ -12,8 +12,14 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/osmanozen/oo-commerce/pkg/buildingblocks/messaging"
 	bbmiddleware "github.com/osmanozen/oo-commerce/pkg/buildingblocks/middleware"
+	orderinghttp "github.com/osmanozen/oo-commerce/services/ordering/internal/adapters/http"
+	"github.com/osmanozen/oo-commerce/services/ordering/internal/adapters/persistence"
+	"github.com/osmanozen/oo-commerce/services/ordering/internal/application/commands"
+	"github.com/osmanozen/oo-commerce/services/ordering/internal/application/queries"
+	"github.com/osmanozen/oo-commerce/services/ordering/internal/saga"
 )
 
 func main() {
@@ -28,6 +34,7 @@ func main() {
 
 	port := envOrDefault("PORT", "8083")
 	kafkaBrokers := []string{envOrDefault("KAFKA_BROKERS", "localhost:9092")}
+	databaseURL := envOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/ocommerce?sslmode=disable")
 
 	// ─── Kafka Producer ─────────────────────────────────────────────────
 	kafkaCfg := messaging.DefaultKafkaProducerConfig(kafkaBrokers)
@@ -38,15 +45,38 @@ func main() {
 	kafkaConsumer := messaging.NewKafkaConsumer(kafkaBrokers, logger)
 	defer kafkaConsumer.Close()
 
-	// ctx, cancel := context.WithCancel(context.Background())
-	// defer cancel()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// ─── Database + Repositories + Saga ─────────────────────────────────
-	// TODO: Initialize pgxpool, create repositories
-	// sagaStore := persistence.NewSagaStore(pool)
-	// checkoutSaga := saga.NewCheckoutSaga(kafkaProducer, sagaStore, logger)
-	// sagaConsumer := saga.NewSagaEventConsumer(checkoutSaga, kafkaConsumer, logger)
-	// sagaConsumer.Start(ctx)
+	poolCfg, err := pgxpool.ParseConfig(databaseURL)
+	if err != nil {
+		logger.Error("failed to parse database url", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	pool, err := pgxpool.NewWithConfig(ctx, poolCfg)
+	if err != nil {
+		logger.Error("failed to initialize database pool", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	defer pool.Close()
+
+	pingCtx, pingCancel := context.WithTimeout(ctx, 5*time.Second)
+	defer pingCancel()
+	if err := pool.Ping(pingCtx); err != nil {
+		logger.Error("database ping failed", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+
+	orderRepo := persistence.NewOrderRepository(pool, logger)
+	cartReader := persistence.NewCartReader(pool)
+	sagaStore := persistence.NewSagaStore(pool)
+	checkoutSaga := saga.NewCheckoutSaga(kafkaProducer, sagaStore, logger)
+	sagaConsumer := saga.NewSagaEventConsumer(checkoutSaga, kafkaConsumer, logger)
+	if err := sagaConsumer.Start(ctx); err != nil {
+		logger.Error("failed to start saga consumers", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
 
 	// ─── HTTP Router ────────────────────────────────────────────────────
 	r := chi.NewRouter()
@@ -64,7 +94,21 @@ func main() {
 		fmt.Fprint(w, `{"status":"healthy","service":"ordering"}`)
 	})
 
-	// TODO: Register order handlers and checkout endpoint
+	checkoutHandler := commands.NewCheckoutHandler(cartReader, orderRepo, checkoutSaga)
+	cancelOrderHandler := commands.NewCancelOrderHandler(orderRepo)
+	simulatePaymentHandler := commands.NewSimulatePaymentHandler(kafkaProducer, sagaStore)
+	getOrderByIDHandler := queries.NewGetOrderByIDHandler(orderRepo)
+	getUserOrdersHandler := queries.NewGetUserOrdersHandler(orderRepo)
+
+	orderingHandler := orderinghttp.NewOrderingHandler(
+		checkoutHandler,
+		cancelOrderHandler,
+		simulatePaymentHandler,
+		getOrderByIDHandler,
+		getUserOrdersHandler,
+		logger,
+	)
+	orderingHandler.RegisterRoutes(r)
 
 	server := &http.Server{
 		Addr:         ":" + port,
@@ -91,7 +135,7 @@ func main() {
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer shutdownCancel()
 
-	// cancel() // stop saga consumers
+	cancel() // stop saga consumers
 
 	if err := server.Shutdown(shutdownCtx); err != nil {
 		logger.Error("server shutdown failed", slog.String("error", err.Error()))

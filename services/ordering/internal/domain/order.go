@@ -3,6 +3,7 @@ package domain
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
@@ -24,6 +25,9 @@ func NewOrderID() OrderID         { return types.NewTypedID[orderTag]() }
 func NewOrderItemID() OrderItemID { return types.NewTypedID[orderItemTag]() }
 
 func OrderIDFromString(s string) (OrderID, error) { return types.TypedIDFromString[orderTag](s) }
+func OrderItemIDFromString(s string) (OrderItemID, error) {
+	return types.TypedIDFromString[orderItemTag](s)
+}
 
 // ─── Order Status Enum ───────────────────────────────────────────────────────
 
@@ -72,6 +76,31 @@ const (
 	PaymentMethodPayPal
 )
 
+var paymentMethodNames = map[PaymentMethod]string{
+	PaymentMethodUnknown:      "Unknown",
+	PaymentMethodCreditCard:   "CreditCard",
+	PaymentMethodDebitCard:    "DebitCard",
+	PaymentMethodBankTransfer: "BankTransfer",
+	PaymentMethodPayPal:       "PayPal",
+}
+
+func (p PaymentMethod) String() string {
+	if name, ok := paymentMethodNames[p]; ok {
+		return name
+	}
+	return "Unknown"
+}
+
+func ParsePaymentMethod(name string) (PaymentMethod, error) {
+	normalized := strings.TrimSpace(name)
+	for method, methodName := range paymentMethodNames {
+		if strings.EqualFold(methodName, normalized) {
+			return method, nil
+		}
+	}
+	return PaymentMethodUnknown, fmt.Errorf("invalid payment method: %q", name)
+}
+
 // ─── Order Address Value Object ──────────────────────────────────────────────
 
 type OrderAddress struct {
@@ -86,6 +115,16 @@ type OrderAddress struct {
 }
 
 func NewOrderAddress(firstName, lastName, street, city, state, zipCode, country, phone string) (OrderAddress, error) {
+	zipCode = strings.TrimSpace(zipCode)
+	if !isValidZipCode(zipCode) {
+		return OrderAddress{}, errors.New("zip code format is invalid")
+	}
+
+	phone = strings.TrimSpace(phone)
+	if !isValidPhone(phone) {
+		return OrderAddress{}, errors.New("phone must be E.164 format")
+	}
+
 	if strings.TrimSpace(firstName) == "" {
 		return OrderAddress{}, errors.New("first name is required")
 	}
@@ -107,10 +146,18 @@ func NewOrderAddress(firstName, lastName, street, city, state, zipCode, country,
 		Street:    strings.TrimSpace(street),
 		City:      strings.TrimSpace(city),
 		State:     strings.TrimSpace(state),
-		ZipCode:   strings.TrimSpace(zipCode),
-		Country:   strings.TrimSpace(country),
-		Phone:     strings.TrimSpace(phone),
+		ZipCode:   zipCode,
+		Country:   strings.ToUpper(strings.TrimSpace(country)),
+		Phone:     phone,
 	}, nil
+}
+
+func (a OrderAddress) FullName() string {
+	return strings.TrimSpace(a.FirstName + " " + a.LastName)
+}
+
+func (a OrderAddress) AddressLine() string {
+	return strings.TrimSpace(fmt.Sprintf("%s, %s, %s %s", a.Street, a.City, a.State, a.ZipCode))
 }
 
 // ─── Order Item (Owned Entity) ───────────────────────────────────────────────
@@ -144,7 +191,10 @@ type Order struct {
 	Total           types.Money   `json:"total"`
 	PaymentMethod   PaymentMethod `json:"paymentMethod" db:"payment_method"`
 	PlacedAt        *time.Time    `json:"placedAt,omitempty" db:"placed_at"`
+	PaidAt          *time.Time    `json:"paidAt,omitempty" db:"paid_at"`
 	ConfirmedAt     *time.Time    `json:"confirmedAt,omitempty" db:"confirmed_at"`
+	ShippedAt       *time.Time    `json:"shippedAt,omitempty" db:"shipped_at"`
+	DeliveredAt     *time.Time    `json:"deliveredAt,omitempty" db:"delivered_at"`
 	CancelledAt     *time.Time    `json:"cancelledAt,omitempty" db:"cancelled_at"`
 	CancelReason    string        `json:"cancelReason,omitempty" db:"cancel_reason"`
 }
@@ -160,6 +210,12 @@ func NewOrder(
 	if len(items) == 0 {
 		return nil, errors.New("order must have at least one item")
 	}
+	if strings.TrimSpace(buyerID) == "" {
+		return nil, errors.New("buyer id is required")
+	}
+	if paymentMethod == PaymentMethodUnknown {
+		return nil, errors.New("payment method is required")
+	}
 
 	order := &Order{
 		ID:              NewOrderID(),
@@ -168,14 +224,25 @@ func NewOrder(
 		Status:          OrderStatusPending,
 		ShippingAddress: shippingAddr,
 		BillingAddress:  billingAddr,
-		Items:           items,
+		Items:           make([]OrderItem, 0, len(items)),
 		PaymentMethod:   paymentMethod,
 	}
 	order.SetCreated()
 
+	for _, item := range items {
+		if item.ID.IsZero() {
+			item.ID = NewOrderItemID()
+		}
+		item.OrderID = order.ID
+		order.Items = append(order.Items, item)
+	}
+
 	// Calculate totals.
 	if err := order.recalculateTotals(currency); err != nil {
 		return nil, fmt.Errorf("calculating totals: %w", err)
+	}
+	if err := order.Validate(); err != nil {
+		return nil, err
 	}
 
 	// Raise domain event.
@@ -214,17 +281,14 @@ func (o *Order) Confirm() error {
 
 // Cancel cancels the order with a reason.
 func (o *Order) Cancel(reason string) error {
-	if o.Status == OrderStatusShipped || o.Status == OrderStatusDelivered {
-		return fmt.Errorf("cannot cancel order in %s status", o.Status)
-	}
-	if o.Status == OrderStatusCancelled {
-		return errors.New("order is already cancelled")
+	if !o.CanBeCancelled() {
+		return fmt.Errorf("order cannot be cancelled in %s status", o.Status.String())
 	}
 
 	o.Status = OrderStatusCancelled
 	now := time.Now().UTC()
 	o.CancelledAt = &now
-	o.CancelReason = reason
+	o.CancelReason = strings.TrimSpace(reason)
 	o.SetUpdated()
 	o.IncrementVersion()
 
@@ -240,10 +304,12 @@ func (o *Order) Cancel(reason string) error {
 
 // MarkPaid transitions the order to Paid status.
 func (o *Order) MarkPaid() error {
-	if o.Status != OrderStatusProcessing {
+	if o.Status != OrderStatusProcessing && o.Status != OrderStatusPending {
 		return fmt.Errorf("cannot mark as paid in %s status", o.Status)
 	}
 	o.Status = OrderStatusPaid
+	now := time.Now().UTC()
+	o.PaidAt = &now
 	o.SetUpdated()
 	o.IncrementVersion()
 
@@ -253,6 +319,93 @@ func (o *Order) MarkPaid() error {
 	})
 
 	return nil
+}
+
+func (o *Order) MarkAsShipped() error {
+	if o.Status != OrderStatusConfirmed {
+		return fmt.Errorf("cannot mark as shipped in %s status", o.Status)
+	}
+
+	o.Status = OrderStatusShipped
+	now := time.Now().UTC()
+	o.ShippedAt = &now
+	o.SetUpdated()
+	o.IncrementVersion()
+	return nil
+}
+
+func (o *Order) MarkAsDelivered() error {
+	if o.Status != OrderStatusShipped {
+		return fmt.Errorf("cannot mark as delivered in %s status", o.Status)
+	}
+
+	o.Status = OrderStatusDelivered
+	now := time.Now().UTC()
+	o.DeliveredAt = &now
+	o.SetUpdated()
+	o.IncrementVersion()
+	return nil
+}
+
+func (o *Order) CanBeCancelled() bool {
+	return o.Status == OrderStatusPending || o.Status == OrderStatusPaid
+}
+
+func (o *Order) GetTotalAmount() types.Money {
+	return o.Total
+}
+
+func (o *Order) Validate() error {
+	if o.ID.IsZero() {
+		return errors.New("order id cannot be zero")
+	}
+	if strings.TrimSpace(o.BuyerID) == "" {
+		return errors.New("buyer id is required")
+	}
+	if len(o.Items) == 0 {
+		return errors.New("order must have at least one item")
+	}
+	if o.PaymentMethod == PaymentMethodUnknown {
+		return errors.New("payment method is required")
+	}
+	for _, item := range o.Items {
+		if item.Quantity <= 0 {
+			return fmt.Errorf("item %s quantity must be positive", item.ID.String())
+		}
+	}
+	if o.Total.Currency == "" {
+		return errors.New("order total currency is required")
+	}
+	return nil
+}
+
+func NewOrderItem(
+	orderID OrderID,
+	productID uuid.UUID,
+	productName string,
+	price types.Money,
+	quantity int,
+) (OrderItem, error) {
+	if productID == uuid.Nil {
+		return OrderItem{}, errors.New("product id is required")
+	}
+	if strings.TrimSpace(productName) == "" {
+		return OrderItem{}, errors.New("product name is required")
+	}
+	if quantity <= 0 {
+		return OrderItem{}, errors.New("quantity must be positive")
+	}
+
+	lineTotal := price.Multiply(quantity)
+	return OrderItem{
+		ID:          NewOrderItemID(),
+		OrderID:     orderID,
+		ProductID:   productID,
+		ProductName: strings.TrimSpace(productName),
+		Price:       price,
+		Quantity:    quantity,
+		LineTotal:   lineTotal,
+	}, nil
 }
 
 func (o *Order) recalculateTotals(currency string) error {
@@ -319,4 +472,17 @@ func generateOrderNumber() string {
 	// UUID v7 first 8 chars + timestamp suffix for human-readable order numbers.
 	id := uuid.Must(uuid.NewV7())
 	return fmt.Sprintf("ORD-%s", strings.ToUpper(id.String()[:8]))
+}
+
+var (
+	zipCodeRegex = regexp.MustCompile(`^[A-Za-z0-9\- ]{3,12}$`)
+	phoneRegex   = regexp.MustCompile(`^\+[1-9]\d{7,14}$`)
+)
+
+func isValidZipCode(zipCode string) bool {
+	return zipCodeRegex.MatchString(strings.TrimSpace(zipCode))
+}
+
+func isValidPhone(phone string) bool {
+	return phoneRegex.MatchString(strings.TrimSpace(phone))
 }
