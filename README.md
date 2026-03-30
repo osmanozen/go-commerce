@@ -16,6 +16,7 @@ Go-based e-commerce backend built with domain-oriented microservices, using DDD 
 - PostgreSQL
 - Kafka
 - Traefik (API gateway / reverse proxy)
+- OPA (Open Policy Agent)
 - Docker and Docker Compose
 - Makefile-based local workflows
 
@@ -36,6 +37,22 @@ Go-based e-commerce backend built with domain-oriented microservices, using DDD 
 
 All `/api/*` service routes are reachable through Traefik on port `443`.
 Certificate was generated for `CN=localhost` and imported into `CurrentUser\Root` on Windows for local trust.
+
+## OPA (Policy Engine)
+- OPA is exposed through Traefik over HTTPS with `/opa` prefix.
+- Policy file: `infra/opa/policies/authz.rego`
+- Decision endpoint: `POST https://localhost/opa/v1/data/ecommerce/authz/allow`
+
+Example request body:
+
+```json
+{
+	"input": {
+		"method": "POST",
+		"role": "admin"
+	}
+}
+```
 
 ## Services
 

@@ -24,6 +24,10 @@ http:
     coupons-health-rewrite:
       replacePath:
         path: /health
+    opa-strip-prefix:
+      stripPrefix:
+        prefixes:
+          - /opa
 
   routers:
     catalog-api:
@@ -154,6 +158,15 @@ http:
         - coupons-health-rewrite
       service: coupons
 
+    opa-api:
+      rule: PathPrefix(`/opa`)
+      entryPoints:
+        - websecure
+      tls: {}
+      middlewares:
+        - opa-strip-prefix
+      service: opa
+
   services:
     catalog:
       loadBalancer:
@@ -194,6 +207,11 @@ http:
       loadBalancer:
         servers:
           - url: http://coupons:8088
+
+    opa:
+      loadBalancer:
+        servers:
+          - url: http://opa:8181
 
 tls:
   certificates:

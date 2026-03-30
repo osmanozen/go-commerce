@@ -21,6 +21,18 @@ services:
       - ./infra/traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
       - ./infra/traefik/certs:/etc/traefik/certs:ro
 
+  # ─── OPA (Open Policy Agent) ──────────────────────────────────────────
+  opa:
+    image: openpolicyagent/opa:0.67.1
+    container_name: ocommerce-opa
+    command:
+      - run
+      - --server
+      - --addr=0.0.0.0:8181
+      - /policies
+    volumes:
+      - ./infra/opa/policies:/policies:ro
+
   # ─── PostgreSQL ──────────────────────────────────────────────────────────
   postgres:
     image: postgres:17-alpine
