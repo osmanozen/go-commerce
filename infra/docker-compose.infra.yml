@@ -1,10 +1,10 @@
-name: oo-commerce
+name: go-commerce
 
 services:
   # Traefik API Gateway
   traefik:
     image: traefik:v3.1
-    container_name: ocommerce-traefik
+    container_name: go-commerce-traefik
     command:
       - --api.dashboard=true
       - --api.insecure=true
@@ -26,7 +26,7 @@ services:
   # OPA (Open Policy Agent)
   opa:
     image: openpolicyagent/opa:0.67.1
-    container_name: ocommerce-opa
+    container_name: go-commerce-opa
     command:
       - run
       - --server
@@ -38,7 +38,7 @@ services:
   # Keycloak (Identity and Access Management)
   keycloak:
     image: keycloak/keycloak:latest
-    container_name: ocommerce-keycloak
+    container_name: go-commerce-keycloak
     command:
       - start-dev
       - --import-realm
@@ -57,11 +57,11 @@ services:
   # PostgreSQL
   postgres:
     image: postgres:17-alpine
-    container_name: ocommerce-postgres
+    container_name: go-commerce-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ocommerce
+      POSTGRES_DB: go-commerce
     ports:
       - "5432:5432"
     volumes:
@@ -75,7 +75,7 @@ services:
   # Kafka (Confluent cp-kafka KRaft mode)
   kafka:
     image: confluentinc/cp-kafka:7.8.0
-    container_name: ocommerce-kafka
+    container_name: go-commerce-kafka
     ports:
       - "29092:29092"
       - "9092:9092"
@@ -93,7 +93,7 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      CLUSTER_ID: "ocommerce-kraft-cluster"
+      CLUSTER_ID: "go-commerce-kraft-cluster"
     volumes:
       - kafka_data:/var/lib/kafka/data
     healthcheck:
@@ -105,9 +105,9 @@ services:
   # Kafka UI (monitoring)
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
-    container_name: ocommerce-kafka-ui
+    container_name: go-commerce-kafka-ui
     environment:
-      KAFKA_CLUSTERS_0_NAME: ocommerce
+      KAFKA_CLUSTERS_0_NAME: go-commerce
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
     ports:
       - "8090:8080"
@@ -118,7 +118,7 @@ services:
   # Redis (caching)
   redis:
     image: redis:7-alpine
-    container_name: ocommerce-redis
+    container_name: go-commerce-redis
     ports:
       - "6379:6379"
     volumes:
@@ -132,7 +132,7 @@ services:
   # Azurite (Azure Blob Storage emulator)
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite:latest
-    container_name: ocommerce-azurite
+    container_name: go-commerce-azurite
     ports:
       - "10000:10000"
       - "10001:10001"

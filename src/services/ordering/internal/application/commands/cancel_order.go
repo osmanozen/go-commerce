@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/cqrs"
-	bberrors "github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/errors"
-	"github.com/osmanozen/oo-commerce/src/services/ordering/internal/domain"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/cqrs"
+	bberrors "github.com/osmanozen/go-commerce/src/pkg/buildingblocks/errors"
+	"github.com/osmanozen/go-commerce/src/services/ordering/internal/domain"
 )
 
 type CancelOrderCommand struct {

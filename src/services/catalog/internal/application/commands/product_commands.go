@@ -5,10 +5,10 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/cqrs"
-	bberrors "github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/errors"
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/types"
-	"github.com/osmanozen/oo-commerce/src/services/catalog/internal/domain"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/cqrs"
+	bberrors "github.com/osmanozen/go-commerce/src/pkg/buildingblocks/errors"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/types"
+	"github.com/osmanozen/go-commerce/src/services/catalog/internal/domain"
 	"github.com/shopspring/decimal"
 )
 

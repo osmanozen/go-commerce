@@ -3,7 +3,7 @@ package domain
 import (
 	"context"
 
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/persistence"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/persistence"
 )
 
 // OrderRepository defines the persistence contract for Order aggregates.

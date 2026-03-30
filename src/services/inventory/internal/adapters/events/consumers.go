@@ -7,8 +7,8 @@ import (
 	"log/slog"
 
 	"github.com/google/uuid"
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/messaging"
-	"github.com/osmanozen/oo-commerce/src/services/inventory/internal/domain"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/messaging"
+	"github.com/osmanozen/go-commerce/src/services/inventory/internal/domain"
 )
 
 // InventoryEventConsumer handles incoming Kafka events from other services.

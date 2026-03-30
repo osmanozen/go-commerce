@@ -1,19 +1,19 @@
 {
-  "realm": "oo-commerce",
+  "realm": "go-commerce",
   "enabled": true,
-  "displayName": "OO-Commerce",
+  "displayName": "GO-Commerce",
   "registrationAllowed": false,
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
   "resetPasswordAllowed": true,
   "clients": [
     {
-      "clientId": "ocommerce-api",
-      "name": "OO-Commerce API",
+      "clientId": "go-commerce-api",
+      "name": "GO",
       "enabled": true,
       "protocol": "openid-connect",
       "publicClient": false,
-      "secret": "ocommerce-api-secret",
+      "secret": "go-commerce-api-secret",
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": true,
       "standardFlowEnabled": true,
@@ -25,8 +25,8 @@
       ]
     },
     {
-      "clientId": "ocommerce-postman",
-      "name": "OO-Commerce Postman",
+      "clientId": "go-commerce-postman",
+      "name": "GO-Commerce Postman",
       "enabled": true,
       "protocol": "openid-connect",
       "publicClient": true,

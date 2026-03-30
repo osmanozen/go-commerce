@@ -12,12 +12,12 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/messaging"
-	bbmiddleware "github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/middleware"
-	couponhttp "github.com/osmanozen/oo-commerce/src/services/coupons/internal/adapters/http"
-	couponpersistence "github.com/osmanozen/oo-commerce/src/services/coupons/internal/adapters/persistence"
-	"github.com/osmanozen/oo-commerce/src/services/coupons/internal/application/commands"
-	"github.com/osmanozen/oo-commerce/src/services/coupons/internal/application/queries"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/messaging"
+	bbmiddleware "github.com/osmanozen/go-commerce/src/pkg/buildingblocks/middleware"
+	couponhttp "github.com/osmanozen/go-commerce/src/services/coupons/internal/adapters/http"
+	couponpersistence "github.com/osmanozen/go-commerce/src/services/coupons/internal/adapters/persistence"
+	"github.com/osmanozen/go-commerce/src/services/coupons/internal/application/commands"
+	"github.com/osmanozen/go-commerce/src/services/coupons/internal/application/queries"
 )
 
 func main() {

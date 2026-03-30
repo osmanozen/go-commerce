@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/messaging"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/messaging"
 )
 
 // Processor polls the outbox table for unsent messages and publishes them

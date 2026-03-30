@@ -4,7 +4,7 @@ import (
 	"context"
 	"embed"
 
-	bbpersistence "github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/persistence"
+	bbpersistence "github.com/osmanozen/go-commerce/src/pkg/buildingblocks/persistence"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

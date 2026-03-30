@@ -13,11 +13,11 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5/pgxpool"
-	bbmiddleware "github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/middleware"
-	wishlisthttp "github.com/osmanozen/oo-commerce/src/services/wishlists/internal/adapters/http"
-	wishlistpersistence "github.com/osmanozen/oo-commerce/src/services/wishlists/internal/adapters/persistence"
-	"github.com/osmanozen/oo-commerce/src/services/wishlists/internal/application/commands"
-	"github.com/osmanozen/oo-commerce/src/services/wishlists/internal/application/queries"
+	bbmiddleware "github.com/osmanozen/go-commerce/src/pkg/buildingblocks/middleware"
+	wishlisthttp "github.com/osmanozen/go-commerce/src/services/wishlists/internal/adapters/http"
+	wishlistpersistence "github.com/osmanozen/go-commerce/src/services/wishlists/internal/adapters/persistence"
+	"github.com/osmanozen/go-commerce/src/services/wishlists/internal/application/commands"
+	"github.com/osmanozen/go-commerce/src/services/wishlists/internal/application/queries"
 )
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 	logger.Info("wishlists service starting", slog.String("version", "1.0.0"))
 
 	port := envOrDefault("PORT", "8087")
-	databaseURL := envOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/ocommerce?sslmode=disable")
+	databaseURL := envOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/go-commerce?sslmode=disable")
 
 	ctx := context.Background()
 	poolCfg, err := pgxpool.ParseConfig(databaseURL)

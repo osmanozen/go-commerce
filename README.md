@@ -1,4 +1,4 @@
-# oo-commerce
+# go-commerce
 
 Go-based e-commerce backend built with domain-oriented microservices, using DDD + CQRS internally and Kafka-driven events with Saga and Outbox patterns for cross-service consistency.
 
@@ -74,9 +74,9 @@ Example request body:
 - Base URL (via Traefik): `https://localhost/auth`
 - Admin Console: `https://localhost/auth/admin/`
 - Admin credentials: `admin / admin`
-- Imported realm: `oo-commerce` from `infra/keycloak/realms/oo-commerce-realm.json`
+- Imported realm: `go-commerce` from `infra/keycloak/realms/go-commerce-realm.json`
 - Token endpoint:
-	- `POST https://localhost/auth/realms/oo-commerce/protocol/openid-connect/token`
+	- `POST https://localhost/auth/realms/go-commerce/protocol/openid-connect/token`
 - Test users:
 	- `admin-user / Admin123!`
 	- `customer-user / Customer123!`

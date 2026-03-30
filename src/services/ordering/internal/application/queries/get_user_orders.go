@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/cqrs"
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/persistence"
-	"github.com/osmanozen/oo-commerce/src/services/ordering/internal/domain"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/cqrs"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/persistence"
+	"github.com/osmanozen/go-commerce/src/services/ordering/internal/domain"
 )
 
 type GetUserOrdersQuery struct {

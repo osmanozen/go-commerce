@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "7a0f36b8-77d8-4722-ae8b-8f2b15f0a61f",
-    "name": "OO-Commerce Microservices (All Services)",
-    "description": "Postman collection for OO-Commerce services behind Traefik HTTPS gateway.",
+    "name": "GO-Commerce Microservices (All Services)",
+    "description": "Postman collection for GO-Commerce services behind Traefik HTTPS gateway.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {

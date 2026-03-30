@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/cqrs"
-	bberrors "github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/errors"
-	"github.com/osmanozen/oo-commerce/src/services/profiles/internal/domain"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/cqrs"
+	bberrors "github.com/osmanozen/go-commerce/src/pkg/buildingblocks/errors"
+	"github.com/osmanozen/go-commerce/src/services/profiles/internal/domain"
 )
 
 type UpdateProfileCommand struct {

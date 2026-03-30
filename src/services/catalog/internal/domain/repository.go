@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/persistence"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/persistence"
 	"github.com/shopspring/decimal"
 )
 

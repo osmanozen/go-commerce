@@ -13,13 +13,13 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/messaging"
-	bbmiddleware "github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/middleware"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/messaging"
+	bbmiddleware "github.com/osmanozen/go-commerce/src/pkg/buildingblocks/middleware"
 
-	carthttp "github.com/osmanozen/oo-commerce/src/services/cart/internal/adapters/http"
-	"github.com/osmanozen/oo-commerce/src/services/cart/internal/adapters/persistence"
-	"github.com/osmanozen/oo-commerce/src/services/cart/internal/application/commands"
-	"github.com/osmanozen/oo-commerce/src/services/cart/internal/application/queries"
+	carthttp "github.com/osmanozen/go-commerce/src/services/cart/internal/adapters/http"
+	"github.com/osmanozen/go-commerce/src/services/cart/internal/adapters/persistence"
+	"github.com/osmanozen/go-commerce/src/services/cart/internal/application/commands"
+	"github.com/osmanozen/go-commerce/src/services/cart/internal/application/queries"
 )
 
 func main() {
@@ -32,7 +32,7 @@ func main() {
 
 	port := envOrDefault("PORT", "8082")
 	kafkaBrokers := []string{envOrDefault("KAFKA_BROKERS", "localhost:9092")}
-	databaseURL := envOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/ocommerce?sslmode=disable")
+	databaseURL := envOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/go-commerce?sslmode=disable")
 
 	kafkaCfg := messaging.DefaultKafkaProducerConfig(kafkaBrokers)
 	kafkaProducer := messaging.NewKafkaProducer(kafkaCfg, logger)

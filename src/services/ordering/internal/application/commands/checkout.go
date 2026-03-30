@@ -6,12 +6,12 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/cqrs"
-	bberrors "github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/errors"
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/types"
-	"github.com/osmanozen/oo-commerce/src/services/ordering/internal/adapters/persistence"
-	"github.com/osmanozen/oo-commerce/src/services/ordering/internal/domain"
-	"github.com/osmanozen/oo-commerce/src/services/ordering/internal/saga"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/cqrs"
+	bberrors "github.com/osmanozen/go-commerce/src/pkg/buildingblocks/errors"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/types"
+	"github.com/osmanozen/go-commerce/src/services/ordering/internal/adapters/persistence"
+	"github.com/osmanozen/go-commerce/src/services/ordering/internal/domain"
+	"github.com/osmanozen/go-commerce/src/services/ordering/internal/saga"
 	"github.com/shopspring/decimal"
 )
 

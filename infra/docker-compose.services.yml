@@ -6,11 +6,11 @@ services:
       dockerfile: infra/docker/Dockerfile.service
       args:
         SERVICE: catalog
-    container_name: ocommerce-catalog
+    container_name: go-commerce-catalog
     environment:
       PORT: 8081
       KAFKA_BROKERS: kafka:9092
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/go-commerce?sslmode=disable
     depends_on:
       postgres:
         condition: service_healthy
@@ -23,11 +23,11 @@ services:
       dockerfile: infra/docker/Dockerfile.service
       args:
         SERVICE: cart
-    container_name: ocommerce-cart
+    container_name: go-commerce-cart
     environment:
       PORT: 8082
       KAFKA_BROKERS: kafka:9092
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/go-commerce?sslmode=disable
     depends_on:
       postgres:
         condition: service_healthy
@@ -40,11 +40,11 @@ services:
       dockerfile: infra/docker/Dockerfile.service
       args:
         SERVICE: ordering
-    container_name: ocommerce-ordering
+    container_name: go-commerce-ordering
     environment:
       PORT: 8083
       KAFKA_BROKERS: kafka:9092
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/go-commerce?sslmode=disable
     depends_on:
       postgres:
         condition: service_healthy
@@ -57,11 +57,11 @@ services:
       dockerfile: infra/docker/Dockerfile.service
       args:
         SERVICE: inventory
-    container_name: ocommerce-inventory
+    container_name: go-commerce-inventory
     environment:
       PORT: 8084
       KAFKA_BROKERS: kafka:9092
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/go-commerce?sslmode=disable
     depends_on:
       postgres:
         condition: service_healthy
@@ -74,7 +74,7 @@ services:
       dockerfile: infra/docker/Dockerfile.service
       args:
         SERVICE: profiles
-    container_name: ocommerce-profiles
+    container_name: go-commerce-profiles
     environment:
       PORT: 8085
       KAFKA_BROKERS: kafka:9092
@@ -88,11 +88,11 @@ services:
       dockerfile: infra/docker/Dockerfile.service
       args:
         SERVICE: reviews
-    container_name: ocommerce-reviews
+    container_name: go-commerce-reviews
     environment:
       PORT: 8086
       KAFKA_BROKERS: kafka:9092
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/go-commerce?sslmode=disable
     depends_on:
       postgres:
         condition: service_healthy
@@ -105,10 +105,10 @@ services:
       dockerfile: infra/docker/Dockerfile.service
       args:
         SERVICE: wishlists
-    container_name: ocommerce-wishlists
+    container_name: go-commerce-wishlists
     environment:
       PORT: 8087
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/go-commerce?sslmode=disable
     depends_on:
       postgres:
         condition: service_healthy
@@ -119,7 +119,7 @@ services:
       dockerfile: infra/docker/Dockerfile.service
       args:
         SERVICE: coupons
-    container_name: ocommerce-coupons
+    container_name: go-commerce-coupons
     environment:
       PORT: 8088
       KAFKA_BROKERS: kafka:9092

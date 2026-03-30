@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	bberrors "github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/errors"
-	"github.com/osmanozen/oo-commerce/src/services/wishlists/internal/application/commands"
-	"github.com/osmanozen/oo-commerce/src/services/wishlists/internal/application/queries"
+	bberrors "github.com/osmanozen/go-commerce/src/pkg/buildingblocks/errors"
+	"github.com/osmanozen/go-commerce/src/services/wishlists/internal/application/commands"
+	"github.com/osmanozen/go-commerce/src/services/wishlists/internal/application/queries"
 )
 
 type WishlistHandler struct {

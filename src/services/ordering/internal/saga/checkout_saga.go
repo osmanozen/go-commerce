@@ -9,7 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/looplab/fsm"
-	"github.com/osmanozen/oo-commerce/src/pkg/buildingblocks/messaging"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/messaging"
 	"github.com/shopspring/decimal"
 )
 

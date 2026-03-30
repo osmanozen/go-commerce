@@ -48,7 +48,7 @@ vet: ## Run go vet
 
 # ─── Docker ───────────────────────────────────────────────────────────────────
 docker-build-%: ## Build Docker image for a service (e.g., make docker-build-catalog)
-	docker build --build-arg SERVICE=$* -f infra/docker/Dockerfile.service -t ocommerce-$*:latest .
+	docker build --build-arg SERVICE=$* -f infra/docker/Dockerfile.service -t go-commerce-$*:latest .
 
 docker-build-all: $(addprefix docker-build-,$(SERVICES)) ## Build Docker images for all services
 
