@@ -1,0 +1,180 @@
+http:
+  middlewares:
+    catalog-health-rewrite:
+      replacePath:
+        path: /health
+    cart-health-rewrite:
+      replacePath:
+        path: /health
+    ordering-health-rewrite:
+      replacePath:
+        path: /health
+    inventory-health-rewrite:
+      replacePath:
+        path: /health
+    profiles-health-rewrite:
+      replacePath:
+        path: /health
+    reviews-health-rewrite:
+      replacePath:
+        path: /health
+    wishlists-health-rewrite:
+      replacePath:
+        path: /health
+    coupons-health-rewrite:
+      replacePath:
+        path: /health
+
+  routers:
+    catalog-api:
+      rule: PathPrefix(`/api/catalog`)
+      entryPoints:
+        - web
+      service: catalog
+
+    catalog-health:
+      rule: Path(`/catalog/health`)
+      entryPoints:
+        - web
+      middlewares:
+        - catalog-health-rewrite
+      service: catalog
+
+    cart-api:
+      rule: PathPrefix(`/api/cart`)
+      entryPoints:
+        - web
+      service: cart
+
+    cart-health:
+      rule: Path(`/cart/health`)
+      entryPoints:
+        - web
+      middlewares:
+        - cart-health-rewrite
+      service: cart
+
+    ordering-api:
+      rule: PathPrefix(`/api/ordering`)
+      entryPoints:
+        - web
+      service: ordering
+
+    ordering-health:
+      rule: Path(`/ordering/health`)
+      entryPoints:
+        - web
+      middlewares:
+        - ordering-health-rewrite
+      service: ordering
+
+    inventory-api:
+      rule: PathPrefix(`/api/inventory`)
+      entryPoints:
+        - web
+      service: inventory
+
+    inventory-health:
+      rule: Path(`/inventory/health`)
+      entryPoints:
+        - web
+      middlewares:
+        - inventory-health-rewrite
+      service: inventory
+
+    profiles-api:
+      rule: PathPrefix(`/api/profiles`)
+      entryPoints:
+        - web
+      service: profiles
+
+    profiles-health:
+      rule: Path(`/profiles/health`)
+      entryPoints:
+        - web
+      middlewares:
+        - profiles-health-rewrite
+      service: profiles
+
+    reviews-api:
+      rule: PathPrefix(`/api/reviews`)
+      entryPoints:
+        - web
+      service: reviews
+
+    reviews-health:
+      rule: Path(`/reviews/health`)
+      entryPoints:
+        - web
+      middlewares:
+        - reviews-health-rewrite
+      service: reviews
+
+    wishlists-api:
+      rule: PathPrefix(`/api/wishlist`)
+      entryPoints:
+        - web
+      service: wishlists
+
+    wishlists-health:
+      rule: Path(`/wishlists/health`)
+      entryPoints:
+        - web
+      middlewares:
+        - wishlists-health-rewrite
+      service: wishlists
+
+    coupons-api:
+      rule: PathPrefix(`/api/coupons`)
+      entryPoints:
+        - web
+      service: coupons
+
+    coupons-health:
+      rule: Path(`/coupons/health`)
+      entryPoints:
+        - web
+      middlewares:
+        - coupons-health-rewrite
+      service: coupons
+
+  services:
+    catalog:
+      loadBalancer:
+        servers:
+          - url: http://catalog:8081
+
+    cart:
+      loadBalancer:
+        servers:
+          - url: http://cart:8082
+
+    ordering:
+      loadBalancer:
+        servers:
+          - url: http://ordering:8083
+
+    inventory:
+      loadBalancer:
+        servers:
+          - url: http://inventory:8084
+
+    profiles:
+      loadBalancer:
+        servers:
+          - url: http://profiles:8085
+
+    reviews:
+      loadBalancer:
+        servers:
+          - url: http://reviews:8086
+
+    wishlists:
+      loadBalancer:
+        servers:
+          - url: http://wishlists:8087
+
+    coupons:
+      loadBalancer:
+        servers:
+          - url: http://coupons:8088

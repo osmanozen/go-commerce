@@ -15,15 +15,32 @@ Go-based e-commerce backend built with domain-oriented microservices, using DDD 
 - Chi HTTP router
 - PostgreSQL
 - Kafka
+- Traefik (API gateway / reverse proxy)
 - Docker and Docker Compose
 - Makefile-based local workflows
+
+## API Gateway (Traefik)
+- Base URL: `http://localhost`
+- Traefik dashboard: `http://localhost:8089/dashboard/`
+- API route format: `/api/<service>/...`
+- Service health routes via gateway:
+	- `GET /catalog/health`
+	- `GET /cart/health`
+	- `GET /ordering/health`
+	- `GET /inventory/health`
+	- `GET /profiles/health`
+	- `GET /reviews/health`
+	- `GET /wishlists/health`
+	- `GET /coupons/health`
+
+All `/api/*` service routes are reachable through Traefik on port `80`.
 
 ## Services
 
 #### Cart Service
 | Method | Path | Description |
 | --- | --- | --- |
-| GET | /health | Health check endpoint |
+| GET | /cart/health | Health check endpoint (gateway) |
 | GET | /api/cart/ | Get current user or guest cart |
 | DELETE | /api/cart/ | Clear all items in current cart |
 | POST | /api/cart/merge | Merge guest cart into user cart |
@@ -34,7 +51,7 @@ Go-based e-commerce backend built with domain-oriented microservices, using DDD 
 #### Catalog Service
 | Method | Path | Description |
 | --- | --- | --- |
-| GET | /health | Health check endpoint |
+| GET | /catalog/health | Health check endpoint (gateway) |
 | GET | /api/catalog/categories/ | List categories |
 | POST | /api/catalog/categories/ | Create a category |
 | GET | /api/catalog/categories/{id} | Get category details |
@@ -50,7 +67,7 @@ Go-based e-commerce backend built with domain-oriented microservices, using DDD 
 #### Coupons Service
 | Method | Path | Description |
 | --- | --- | --- |
-| GET | /health | Health check endpoint |
+| GET | /coupons/health | Health check endpoint (gateway) |
 | POST | /api/coupons/ | Create a coupon |
 | GET | /api/coupons/ | List coupons |
 | POST | /api/coupons/validate | Validate coupon against basket |
@@ -61,7 +78,7 @@ Go-based e-commerce backend built with domain-oriented microservices, using DDD 
 #### Inventory Service
 | Method | Path | Description |
 | --- | --- | --- |
-| GET | /health | Health check endpoint |
+| GET | /inventory/health | Health check endpoint (gateway) |
 | GET | /api/inventory/stock/{productId} | Get stock for one product |
 | POST | /api/inventory/stock/{productId}/adjust | Increase or decrease stock |
 | POST | /api/inventory/stock/levels | Get stock levels for many products |
@@ -69,7 +86,7 @@ Go-based e-commerce backend built with domain-oriented microservices, using DDD 
 #### Ordering Service
 | Method | Path | Description |
 | --- | --- | --- |
-| GET | /health | Health check endpoint |
+| GET | /ordering/health | Health check endpoint (gateway) |
 | POST | /api/ordering/checkout | Create order from checkout request |
 | GET | /api/ordering/orders/ | List current user orders |
 | GET | /api/ordering/orders/{orderId} | Get order details |
@@ -79,7 +96,7 @@ Go-based e-commerce backend built with domain-oriented microservices, using DDD 
 #### Profiles Service
 | Method | Path | Description |
 | --- | --- | --- |
-| GET | /health | Health check endpoint |
+| GET | /profiles/health | Health check endpoint (gateway) |
 | GET | /api/profiles/me/ | Get current user profile |
 | PUT | /api/profiles/me/ | Update profile info |
 | POST | /api/profiles/me/avatar | Upload avatar metadata |
@@ -92,7 +109,7 @@ Go-based e-commerce backend built with domain-oriented microservices, using DDD 
 #### Reviews Service
 | Method | Path | Description |
 | --- | --- | --- |
-| GET | /health | Health check endpoint |
+| GET | /reviews/health | Health check endpoint (gateway) |
 | GET | /api/reviews/products/{productId}/ | List reviews for a product |
 | GET | /api/reviews/products/{productId}/mine | Get current user review |
 | GET | /api/reviews/products/{productId}/can-review | Check if user can review |
@@ -103,7 +120,7 @@ Go-based e-commerce backend built with domain-oriented microservices, using DDD 
 #### Wishlists Service
 | Method | Path | Description |
 | --- | --- | --- |
-| GET | /health | Health check endpoint |
+| GET | /wishlists/health | Health check endpoint (gateway) |
 | GET | /api/wishlist/ | Get wishlist items |
 | GET | /api/wishlist/count | Get wishlist item count |
 | GET | /api/wishlist/product-ids | Get wishlist product IDs only |

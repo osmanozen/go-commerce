@@ -1,4 +1,21 @@
 services:
+  # ─── Traefik API Gateway ───────────────────────────────────────────────
+  traefik:
+    image: traefik:v3.1
+    container_name: ocommerce-traefik
+    command:
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --providers.file.filename=/etc/traefik/dynamic.yml
+      - --providers.file.watch=true
+      - --entrypoints.web.address=:80
+      - --ping=true
+    ports:
+      - "80:80"
+      - "8089:8080"
+    volumes:
+      - ./infra/traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+
   # ─── PostgreSQL ──────────────────────────────────────────────────────────
   postgres:
     image: postgres:17-alpine
@@ -98,8 +115,6 @@ services:
       PORT: 8081
       KAFKA_BROKERS: kafka:9092
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
-    ports:
-      - "8081:8081"
     depends_on:
       postgres:
         condition: service_healthy
@@ -117,8 +132,6 @@ services:
       PORT: 8082
       KAFKA_BROKERS: kafka:9092
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
-    ports:
-      - "8082:8082"
     depends_on:
       postgres:
         condition: service_healthy
@@ -136,8 +149,6 @@ services:
       PORT: 8083
       KAFKA_BROKERS: kafka:9092
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
-    ports:
-      - "8083:8083"
     depends_on:
       postgres:
         condition: service_healthy
@@ -155,8 +166,6 @@ services:
       PORT: 8084
       KAFKA_BROKERS: kafka:9092
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
-    ports:
-      - "8084:8084"
     depends_on:
       postgres:
         condition: service_healthy
@@ -173,8 +182,6 @@ services:
     environment:
       PORT: 8085
       KAFKA_BROKERS: kafka:9092
-    ports:
-      - "8085:8085"
     depends_on:
       kafka:
         condition: service_healthy
@@ -190,8 +197,6 @@ services:
       PORT: 8086
       KAFKA_BROKERS: kafka:9092
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
-    ports:
-      - "8086:8086"
     depends_on:
       postgres:
         condition: service_healthy
@@ -208,8 +213,6 @@ services:
     environment:
       PORT: 8087
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
-    ports:
-      - "8087:8087"
     depends_on:
       postgres:
         condition: service_healthy
@@ -224,8 +227,6 @@ services:
     environment:
       PORT: 8088
       KAFKA_BROKERS: kafka:9092
-    ports:
-      - "8088:8088"
     depends_on:
       kafka:
         condition: service_healthy
