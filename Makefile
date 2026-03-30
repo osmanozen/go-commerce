@@ -2,19 +2,21 @@
 
 # ─── Variables ────────────────────────────────────────────────────────────────
 SERVICES := catalog cart ordering inventory profiles reviews wishlists coupons
+COMPOSE_INFRA := -f infra/docker-compose.infra.yml
+COMPOSE_SERVICES := -f infra/docker-compose.services.yml
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 # ─── Infrastructure ──────────────────────────────────────────────────────────
 up: ## Start all infrastructure (Kafka, Postgres, Redis)
-	docker-compose up -d
+	docker compose $(COMPOSE_INFRA) up -d
 	@echo "Waiting for Kafka to be healthy..."
-	@docker-compose exec -T kafka bash -c 'until kafka-topics --bootstrap-server localhost:9092 --list 2>/dev/null; do sleep 2; done'
+	@docker compose $(COMPOSE_INFRA) exec -T kafka bash -c 'until kafka-topics --bootstrap-server localhost:9092 --list 2>/dev/null; do sleep 2; done'
 	@echo "Infrastructure ready!"
 
 down: ## Stop all infrastructure
-	docker-compose down
+	docker compose $(COMPOSE_INFRA) $(COMPOSE_SERVICES) down
 
 # ─── Build ────────────────────────────────────────────────────────────────────
 build: $(addprefix build-,$(SERVICES)) ## Build all services

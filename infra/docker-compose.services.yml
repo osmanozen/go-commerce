@@ -1,0 +1,128 @@
+services:
+  # Microservices
+  catalog:
+    build:
+      context: ..
+      dockerfile: infra/docker/Dockerfile.service
+      args:
+        SERVICE: catalog
+    container_name: ocommerce-catalog
+    environment:
+      PORT: 8081
+      KAFKA_BROKERS: kafka:9092
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  cart:
+    build:
+      context: ..
+      dockerfile: infra/docker/Dockerfile.service
+      args:
+        SERVICE: cart
+    container_name: ocommerce-cart
+    environment:
+      PORT: 8082
+      KAFKA_BROKERS: kafka:9092
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  ordering:
+    build:
+      context: ..
+      dockerfile: infra/docker/Dockerfile.service
+      args:
+        SERVICE: ordering
+    container_name: ocommerce-ordering
+    environment:
+      PORT: 8083
+      KAFKA_BROKERS: kafka:9092
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  inventory:
+    build:
+      context: ..
+      dockerfile: infra/docker/Dockerfile.service
+      args:
+        SERVICE: inventory
+    container_name: ocommerce-inventory
+    environment:
+      PORT: 8084
+      KAFKA_BROKERS: kafka:9092
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  profiles:
+    build:
+      context: ..
+      dockerfile: infra/docker/Dockerfile.service
+      args:
+        SERVICE: profiles
+    container_name: ocommerce-profiles
+    environment:
+      PORT: 8085
+      KAFKA_BROKERS: kafka:9092
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  reviews:
+    build:
+      context: ..
+      dockerfile: infra/docker/Dockerfile.service
+      args:
+        SERVICE: reviews
+    container_name: ocommerce-reviews
+    environment:
+      PORT: 8086
+      KAFKA_BROKERS: kafka:9092
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  wishlists:
+    build:
+      context: ..
+      dockerfile: infra/docker/Dockerfile.service
+      args:
+        SERVICE: wishlists
+    container_name: ocommerce-wishlists
+    environment:
+      PORT: 8087
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ocommerce?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  coupons:
+    build:
+      context: ..
+      dockerfile: infra/docker/Dockerfile.service
+      args:
+        SERVICE: coupons
+    container_name: ocommerce-coupons
+    environment:
+      PORT: 8088
+      KAFKA_BROKERS: kafka:9092
+    depends_on:
+      kafka:
+        condition: service_healthy

@@ -21,7 +21,9 @@ Go-based e-commerce backend built with domain-oriented microservices, using DDD 
 - Docker and Docker Compose
 - Makefile-based local workflows
 
-## API Gateway (Traefik)
+## Infra
+
+#### API Gateway (Traefik)
 - Base URL: `https://localhost`
 - Traefik dashboard: `http://localhost:8089/dashboard/`
 - API route format: `/api/<service>/...`
@@ -42,7 +44,17 @@ Go-based e-commerce backend built with domain-oriented microservices, using DDD 
 All `/api/*` service routes are reachable through Traefik on port `443`.
 Certificate was generated for `CN=localhost` and imported into `CurrentUser\Root` on Windows for local trust.
 
-## OPA (Policy Engine)
+#### Docker Compose Layout
+- `infra/docker-compose.infra.yml`: gateway, security and shared infrastructure (Traefik, OPA, Keycloak, Postgres, Kafka, Redis, Azurite)
+- `infra/docker-compose.services.yml`: domain microservices
+- Root `docker-compose.yml` includes both files for convenience.
+
+Common commands:
+- Start infra only: `docker compose -f infra/docker-compose.infra.yml up -d`
+- Start services with infra: `docker compose -f infra/docker-compose.infra.yml -f infra/docker-compose.services.yml up -d --build` (with build images before starting containers)
+- Stop all: `docker compose -f infra/docker-compose.infra.yml -f infra/docker-compose.services.yml down --volume` (with remove volumes)
+
+#### OPA (Policy Engine)
 - OPA is exposed through Traefik over HTTPS with `/opa` prefix.
 - Policy file: `infra/opa/policies/authz.rego`
 - Decision endpoint: `POST https://localhost/opa/v1/data/ecommerce/authz/allow`
@@ -58,7 +70,7 @@ Example request body:
 }
 ```
 
-## Keycloak
+#### Keycloak
 - Base URL (via Traefik): `https://localhost/auth`
 - Admin Console: `https://localhost/auth/admin/`
 - Admin credentials: `admin / admin`
