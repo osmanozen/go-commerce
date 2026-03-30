@@ -1,0 +1,85 @@
+{
+  "realm": "oo-commerce",
+  "enabled": true,
+  "displayName": "OO-Commerce",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "clients": [
+    {
+      "clientId": "ocommerce-api",
+      "name": "OO-Commerce API",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "ocommerce-api-secret",
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": true,
+      "redirectUris": [
+        "https://localhost/*"
+      ],
+      "webOrigins": [
+        "https://localhost"
+      ]
+    },
+    {
+      "clientId": "ocommerce-postman",
+      "name": "OO-Commerce Postman",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": false,
+      "redirectUris": [
+        "https://oauth.pstmn.io/v1/callback"
+      ],
+      "webOrigins": [
+        "https://oauth.pstmn.io"
+      ]
+    }
+  ],
+  "roles": {
+    "realm": [
+      { "name": "admin" },
+      { "name": "customer" }
+    ]
+  },
+  "users": [
+    {
+      "username": "admin-user",
+      "enabled": true,
+      "email": "admin-user@localhost",
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "User",
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Admin123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["admin"]
+    },
+    {
+      "username": "customer-user",
+      "enabled": true,
+      "email": "customer-user@localhost",
+      "emailVerified": true,
+      "firstName": "Customer",
+      "lastName": "User",
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Customer123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["customer"]
+    }
+  ]
+}

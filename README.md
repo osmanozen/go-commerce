@@ -17,6 +17,7 @@ Go-based e-commerce backend built with domain-oriented microservices, using DDD 
 - Kafka
 - Traefik (API gateway / reverse proxy)
 - OPA (Open Policy Agent)
+- Keycloak (Identity and Access Management)
 - Docker and Docker Compose
 - Makefile-based local workflows
 
@@ -24,6 +25,9 @@ Go-based e-commerce backend built with domain-oriented microservices, using DDD 
 - Base URL: `https://localhost`
 - Traefik dashboard: `http://localhost:8089/dashboard/`
 - API route format: `/api/<service>/...`
+- Service API authentication: Basic Auth (required on all `/api/*` routes)
+	- Username: `gateway`
+	- Password: `S3rv1ce!2026`
 - Local TLS certificate files: `infra/traefik/certs/localhost.crt` and `infra/traefik/certs/localhost.key`
 - Service health routes via gateway:
 	- `GET /catalog/health`
@@ -53,6 +57,17 @@ Example request body:
 	}
 }
 ```
+
+## Keycloak
+- Base URL (via Traefik): `https://localhost/auth`
+- Admin Console: `https://localhost/auth/admin/`
+- Admin credentials: `admin / admin`
+- Imported realm: `oo-commerce` from `infra/keycloak/realms/oo-commerce-realm.json`
+- Token endpoint:
+	- `POST https://localhost/auth/realms/oo-commerce/protocol/openid-connect/token`
+- Test users:
+	- `admin-user / Admin123!`
+	- `customer-user / Customer123!`
 
 ## Services
 

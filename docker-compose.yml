@@ -33,6 +33,25 @@ services:
     volumes:
       - ./infra/opa/policies:/policies:ro
 
+  # ─── Keycloak (Identity and Access Management) ───────────────────────
+  keycloak:
+    image: keycloak/keycloak:latest
+    container_name: ocommerce-keycloak
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_PROXY_HEADERS: xforwarded
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_STRICT: false
+      KC_HTTP_ENABLED: true
+    volumes:
+      - ./infra/keycloak/realms:/opt/keycloak/data/import:ro
+      - keycloak_data:/opt/keycloak/data
+
   # ─── PostgreSQL ──────────────────────────────────────────────────────────
   postgres:
     image: postgres:17-alpine
@@ -253,3 +272,4 @@ volumes:
   kafka_data:
   redis_data:
   azurite_data:
+  keycloak_data:
