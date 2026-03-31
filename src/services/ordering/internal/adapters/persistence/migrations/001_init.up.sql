@@ -45,7 +45,7 @@ CREATE TABLE ordering.orders (
     cancel_reason varchar(500),
     paid_at timestamptz,
     shipped_at timestamptz,
-    delivered_at timestamptz;
+    delivered_at timestamptz,
 
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),

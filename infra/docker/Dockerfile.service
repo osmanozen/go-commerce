@@ -12,7 +12,8 @@ RUN apk add --no-cache git ca-certificates
 WORKDIR /app
 
 # Copy workspace files
-COPY go.work go.work.sum ./
+COPY go.work ./
+COPY go.work.sum* ./
 COPY src/pkg/ src/pkg/
 COPY src/services/${SERVICE}/ src/services/${SERVICE}/
 
