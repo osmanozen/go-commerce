@@ -6,13 +6,71 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
-    "type": "basic",
-    "basic": [
-      { "key": "username", "value": "{{gateway_auth_user}}", "type": "string" },
-      { "key": "password", "value": "{{gateway_auth_password}}", "type": "string" }
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{gateway_auth_token}}",
+        "type": "string"
+      }
     ]
   },
   "item": [
+    {
+      "name": "Security & Keycloak",
+      "item": [
+        {
+          "name": "Get Keycloak Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"gateway_auth_token\", jsonData.access_token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "client_id",
+                  "value": "{{keycloak_client_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "{{keycloak_username}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{keycloak_password}}",
+                  "type": "text"
+                },
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text"
+                },
+                {
+                  "key": "scope",
+                  "value": "openid",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": "{{catalog_base}}/auth/realms/go-commerce/protocol/openid-connect/token"
+          }
+        }
+      ]
+    },
     {
       "name": "Catalog Service",
       "item": [
@@ -34,7 +92,12 @@
           "name": "Create Category",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Electronics\",\n  \"description\": \"Electronic devices\"\n}"
@@ -53,7 +116,12 @@
           "name": "Update Category",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Electronics & Gadgets\",\n  \"description\": \"Updated category description\"\n}"
@@ -79,7 +147,12 @@
           "name": "Create Product",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Sony PlayStation 5\",\n  \"description\": \"Game console\",\n  \"sku\": \"PS5-001\",\n  \"priceAmount\": 29999,\n  \"priceCurrency\": \"TRY\",\n  \"categoryId\": \"{{category_id}}\"\n}"
@@ -98,7 +171,12 @@
           "name": "Update Product",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Sony PlayStation 5 Slim\",\n  \"description\": \"Updated model\",\n  \"sku\": \"PS5-001\",\n  \"priceAmount\": 28999,\n  \"priceCurrency\": \"TRY\",\n  \"categoryId\": \"{{category_id}}\"\n}"
@@ -110,7 +188,12 @@
           "name": "Patch Product Review Stats",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"ratingAverage\": 4.6,\n  \"ratingCount\": 120\n}"
@@ -141,7 +224,12 @@
           "name": "Get Cart",
           "request": {
             "method": "GET",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{cart_base}}/api/cart/"
           }
         },
@@ -150,8 +238,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-User-ID", "value": "{{user_id}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -165,8 +259,14 @@
           "request": {
             "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-User-ID", "value": "{{user_id}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -179,7 +279,12 @@
           "name": "Remove Cart Item",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{cart_base}}/api/cart/items/{{cart_item_id}}"
           }
         },
@@ -187,7 +292,12 @@
           "name": "Clear Cart",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{cart_base}}/api/cart/"
           }
         },
@@ -196,8 +306,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-User-ID", "value": "{{user_id}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -223,8 +339,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-User-ID", "value": "{{user_id}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -237,7 +359,12 @@
           "name": "Get My Orders",
           "request": {
             "method": "GET",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{ordering_base}}/api/ordering/orders/?page=1&pageSize=10"
           }
         },
@@ -245,7 +372,12 @@
           "name": "Get Order By ID",
           "request": {
             "method": "GET",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{ordering_base}}/api/ordering/orders/{{order_id}}"
           }
         },
@@ -254,8 +386,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-User-ID", "value": "{{user_id}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -268,7 +406,12 @@
           "name": "Simulate Payment",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"success\": true,\n  \"failureReason\": \"\"\n}"
@@ -300,8 +443,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-User-ID", "value": "{{user_id}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -314,7 +463,12 @@
           "name": "Get Stock Levels (Batch)",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"productIds\": [\n    \"{{product_id}}\"\n  ]\n}"
@@ -338,7 +492,12 @@
           "name": "Get My Profile",
           "request": {
             "method": "GET",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{profiles_base}}/api/profiles/me/"
           }
         },
@@ -347,8 +506,14 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-User-ID", "value": "{{user_id}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -361,7 +526,12 @@
           "name": "Upload Avatar (multipart/form-data)",
           "request": {
             "method": "POST",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "body": {
               "mode": "formdata",
               "formdata": [
@@ -379,7 +549,12 @@
           "name": "Remove Avatar",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{profiles_base}}/api/profiles/me/avatar"
           }
         },
@@ -388,8 +563,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-User-ID", "value": "{{user_id}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -403,8 +584,14 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-User-ID", "value": "{{user_id}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -417,7 +604,12 @@
           "name": "Delete Address",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{profiles_base}}/api/profiles/me/addresses/{{address_id}}"
           }
         },
@@ -425,7 +617,12 @@
           "name": "Set Default Address",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{profiles_base}}/api/profiles/me/addresses/{{address_id}}/default"
           }
         }
@@ -452,7 +649,12 @@
           "name": "Get My Review For Product",
           "request": {
             "method": "GET",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{reviews_base}}/api/reviews/products/{{product_id}}/mine"
           }
         },
@@ -460,7 +662,12 @@
           "name": "Can I Review Product",
           "request": {
             "method": "GET",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{reviews_base}}/api/reviews/products/{{product_id}}/can-review"
           }
         },
@@ -469,8 +676,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-User-ID", "value": "{{user_id}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -484,8 +697,14 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-User-ID", "value": "{{user_id}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -498,7 +717,12 @@
           "name": "Delete Review",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{reviews_base}}/api/reviews/{{review_id}}"
           }
         }
@@ -518,7 +742,12 @@
           "name": "Get Wishlist",
           "request": {
             "method": "GET",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{wishlists_base}}/api/wishlist/"
           }
         },
@@ -526,7 +755,12 @@
           "name": "Get Wishlist Count",
           "request": {
             "method": "GET",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{wishlists_base}}/api/wishlist/count"
           }
         },
@@ -534,7 +768,12 @@
           "name": "Get Wishlist Product IDs",
           "request": {
             "method": "GET",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{wishlists_base}}/api/wishlist/product-ids"
           }
         },
@@ -542,7 +781,12 @@
           "name": "Add To Wishlist",
           "request": {
             "method": "POST",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{wishlists_base}}/api/wishlist/{{product_id}}"
           }
         },
@@ -550,7 +794,12 @@
           "name": "Remove From Wishlist",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "X-User-ID", "value": "{{user_id}}" }],
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{user_id}}"
+              }
+            ],
             "url": "{{wishlists_base}}/api/wishlist/{{product_id}}"
           }
         }
@@ -570,7 +819,12 @@
           "name": "Create Coupon",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"code\": \"WELCOME10\",\n  \"name\": \"Welcome Discount\",\n  \"description\": \"First order discount\",\n  \"discountType\": 1,\n  \"discountValue\": 10,\n  \"currency\": \"TRY\"\n}"
@@ -596,7 +850,12 @@
           "name": "Update Coupon",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Welcome Discount Updated\",\n  \"description\": \"Updated description\",\n  \"discountType\": 1,\n  \"discountValue\": 15,\n  \"currency\": \"TRY\"\n}"
@@ -608,7 +867,12 @@
           "name": "Toggle Coupon Status",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"isActive\": false\n}"
@@ -620,7 +884,12 @@
           "name": "Validate Coupon",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"code\": \"WELCOME10\",\n  \"cartTotal\": 500\n}"
@@ -644,7 +913,12 @@
           "name": "Allow (GET user)",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"input\": {\n    \"method\": \"GET\",\n    \"role\": \"user\"\n  }\n}"
@@ -656,7 +930,12 @@
           "name": "Allow (POST admin)",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"input\": {\n    \"method\": \"POST\",\n    \"role\": \"admin\"\n  }\n}"

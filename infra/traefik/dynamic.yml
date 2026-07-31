@@ -1,9 +1,13 @@
 http:
   middlewares:
     service-authn:
-      basicAuth:
-        users:
-          - "gateway:$2y$05$bAvWKFuBQMdOkpNAmyoiOex4K4bn68IXdXxhURf01OsOwvaaF75nG"
+      plugin:
+        jwt:
+          required: true
+          payloadFields:
+            - "exp"
+          keys:
+            - "http://keycloak:8080/auth/realms/go-commerce/protocol/openid-connect/certs"
     catalog-health-rewrite:
       replacePath:
         path: /health
