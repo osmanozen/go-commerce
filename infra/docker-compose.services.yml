@@ -11,6 +11,11 @@ services:
       PORT: 8081
       KAFKA_BROKERS: kafka:9092
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/go-commerce?sslmode=disable
+      LOG_DIR: /logs
+      LOG_LEVEL: error
+      FILE_LOG_ENABLED: "true"
+    volumes:
+      - ./logs:/logs
     depends_on:
       postgres:
         condition: service_healthy
@@ -28,6 +33,11 @@ services:
       PORT: 8082
       KAFKA_BROKERS: kafka:9092
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/go-commerce?sslmode=disable
+      LOG_DIR: /logs
+      LOG_LEVEL: error
+      FILE_LOG_ENABLED: "false"
+    volumes:
+      - ./logs:/logs
     depends_on:
       postgres:
         condition: service_healthy
@@ -45,6 +55,11 @@ services:
       PORT: 8083
       KAFKA_BROKERS: kafka:9092
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/go-commerce?sslmode=disable
+      LOG_DIR: /logs
+      LOG_LEVEL: error
+      FILE_LOG_ENABLED: "false"
+    volumes:
+      - ./logs:/logs
     depends_on:
       postgres:
         condition: service_healthy
@@ -62,6 +77,11 @@ services:
       PORT: 8084
       KAFKA_BROKERS: kafka:9092
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/go-commerce?sslmode=disable
+      LOG_DIR: /logs
+      LOG_LEVEL: error
+      FILE_LOG_ENABLED: "false"
+    volumes:
+      - ./logs:/logs
     depends_on:
       postgres:
         condition: service_healthy
@@ -78,6 +98,11 @@ services:
     environment:
       PORT: 8085
       KAFKA_BROKERS: kafka:9092
+      LOG_DIR: /logs
+      LOG_LEVEL: error
+      FILE_LOG_ENABLED: "false"
+    volumes:
+      - ./logs:/logs
     depends_on:
       kafka:
         condition: service_healthy
@@ -93,6 +118,11 @@ services:
       PORT: 8086
       KAFKA_BROKERS: kafka:9092
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/go-commerce?sslmode=disable
+      LOG_DIR: /logs
+      LOG_LEVEL: error
+      FILE_LOG_ENABLED: "false"
+    volumes:
+      - ./logs:/logs
     depends_on:
       postgres:
         condition: service_healthy
@@ -108,9 +138,17 @@ services:
     container_name: go-commerce-wishlists
     environment:
       PORT: 8087
+      KAFKA_BROKERS: kafka:9092
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/go-commerce?sslmode=disable
+      LOG_DIR: /logs
+      LOG_LEVEL: error
+      FILE_LOG_ENABLED: "false"
+    volumes:
+      - ./logs:/logs
     depends_on:
       postgres:
+        condition: service_healthy
+      kafka:
         condition: service_healthy
 
   coupons:
@@ -123,6 +161,14 @@ services:
     environment:
       PORT: 8088
       KAFKA_BROKERS: kafka:9092
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/go-commerce?sslmode=disable
+      LOG_DIR: /logs
+      LOG_LEVEL: error
+      FILE_LOG_ENABLED: "false"
+    volumes:
+      - ./logs:/logs
     depends_on:
+      postgres:
+        condition: service_healthy
       kafka:
         condition: service_healthy

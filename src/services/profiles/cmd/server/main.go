@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/logging"
 	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/messaging"
 	bbmiddleware "github.com/osmanozen/go-commerce/src/pkg/buildingblocks/middleware"
 	profileshttp "github.com/osmanozen/go-commerce/src/services/profiles/internal/adapters/http"
@@ -21,15 +22,14 @@ import (
 )
 
 func main() {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelInfo,
-	}))
-	slog.SetDefault(logger)
-
-	logger.Info("profiles service starting", slog.String("version", "1.0.0"))
-
+	// ─── Configuration ──────────────────────────────────────────────────
 	port := envOrDefault("PORT", "8085")
 	kafkaBrokers := []string{envOrDefault("KAFKA_BROKERS", "localhost:9092")}
+
+	// ─── Logger ──────────────────────────────────────────────────────────
+	logger := logging.InitLogger("profiles", kafkaBrokers)
+
+	logger.Info("profiles service starting", slog.String("version", "1.0.0"))
 
 	kafkaCfg := messaging.DefaultKafkaProducerConfig(kafkaBrokers)
 	kafkaProducer := messaging.NewKafkaProducer(kafkaCfg, logger)

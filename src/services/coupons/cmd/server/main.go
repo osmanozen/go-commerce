@@ -12,6 +12,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/logging"
 	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/messaging"
 	bbmiddleware "github.com/osmanozen/go-commerce/src/pkg/buildingblocks/middleware"
 	couponhttp "github.com/osmanozen/go-commerce/src/services/coupons/internal/adapters/http"
@@ -21,15 +23,44 @@ import (
 )
 
 func main() {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelInfo,
-	}))
-	slog.SetDefault(logger)
+	// ─── Configuration ──────────────────────────────────────────────────
+	port := envOrDefault("PORT", "8088")
+	databaseURL := envOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/go-commerce?sslmode=disable")
+	kafkaBrokers := []string{envOrDefault("KAFKA_BROKERS", "localhost:9092")}
+
+	// ─── Logger ──────────────────────────────────────────────────────────
+	logger := logging.InitLogger("coupons", kafkaBrokers)
 
 	logger.Info("coupons service starting", slog.String("version", "1.0.0"))
 
-	port := envOrDefault("PORT", "8088")
-	kafkaBrokers := []string{envOrDefault("KAFKA_BROKERS", "localhost:9092")}
+	ctx := context.Background()
+	poolCfg, err := pgxpool.ParseConfig(databaseURL)
+	if err != nil {
+		logger.Error("failed to parse database url", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	pool, err := pgxpool.NewWithConfig(ctx, poolCfg)
+	if err != nil {
+		logger.Error("failed to initialize database pool", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	defer pool.Close()
+
+	pingCtx, pingCancel := context.WithTimeout(ctx, 5*time.Second)
+	defer pingCancel()
+	if err := pool.Ping(pingCtx); err != nil {
+		logger.Error("database ping failed", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+
+	appliedMigrations, err := couponpersistence.RunMigrations(ctx, pool)
+	if err != nil {
+		logger.Error("failed to run coupons migrations", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	if appliedMigrations > 0 {
+		logger.Info("coupons migrations applied", slog.Int("count", appliedMigrations))
+	}
 
 	kafkaCfg := messaging.DefaultKafkaProducerConfig(kafkaBrokers)
 	kafkaProducer := messaging.NewKafkaProducer(kafkaCfg, logger)
@@ -50,7 +81,7 @@ func main() {
 		fmt.Fprint(w, `{"status":"healthy","service":"coupons"}`)
 	})
 
-	couponRepo := couponpersistence.NewInMemoryCouponRepository()
+	couponRepo := couponpersistence.NewPostgresCouponRepository(pool)
 	createCoupon := commands.NewCreateCouponHandler(couponRepo)
 	updateCoupon := commands.NewUpdateCouponHandler(couponRepo)
 	toggleCouponStatus := commands.NewToggleCouponStatusHandler(couponRepo)

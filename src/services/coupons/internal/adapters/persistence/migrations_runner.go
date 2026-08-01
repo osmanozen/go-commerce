@@ -1,0 +1,20 @@
+package persistence
+
+import (
+	"context"
+	"embed"
+
+	bbpersistence "github.com/osmanozen/go-commerce/src/pkg/buildingblocks/persistence"
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+//go:embed migrations/*.sql
+var migrationsFS embed.FS
+
+func RunMigrations(ctx context.Context, pool *pgxpool.Pool) (int, error) {
+	return bbpersistence.RunEmbeddedMigrations(ctx, pool, bbpersistence.MigrateOptions{
+		ServiceName: "coupons",
+		Migrations:  migrationsFS,
+		Dir:         "migrations",
+	})
+}

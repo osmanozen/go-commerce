@@ -66,7 +66,17 @@
                 }
               ]
             },
-            "url": "{{catalog_base}}/auth/realms/go-commerce/protocol/openid-connect/token"
+            "url": "{{catalog_base}}/auth/realms/go-commerce/protocol/openid-connect/token",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         }
       ]
@@ -85,7 +95,17 @@
           "name": "List Categories",
           "request": {
             "method": "GET",
-            "url": "{{catalog_base}}/api/catalog/categories/"
+            "url": "{{catalog_base}}/api/catalog/categories/",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -102,14 +122,34 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"Electronics\",\n  \"description\": \"Electronic devices\"\n}"
             },
-            "url": "{{catalog_base}}/api/catalog/categories/"
+            "url": "{{catalog_base}}/api/catalog/categories/",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Get Category By ID",
           "request": {
             "method": "GET",
-            "url": "{{catalog_base}}/api/catalog/categories/{{category_id}}"
+            "url": "{{catalog_base}}/api/catalog/categories/{{category_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -126,21 +166,51 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"Electronics & Gadgets\",\n  \"description\": \"Updated category description\"\n}"
             },
-            "url": "{{catalog_base}}/api/catalog/categories/{{category_id}}"
+            "url": "{{catalog_base}}/api/catalog/categories/{{category_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Delete Category",
           "request": {
             "method": "DELETE",
-            "url": "{{catalog_base}}/api/catalog/categories/{{category_id}}"
+            "url": "{{catalog_base}}/api/catalog/categories/{{category_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
           "name": "List Products",
           "request": {
             "method": "GET",
-            "url": "{{catalog_base}}/api/catalog/products/?page=1&pageSize=12"
+            "url": "{{catalog_base}}/api/catalog/products/?page=1&pageSize=12",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -157,14 +227,34 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"Sony PlayStation 5\",\n  \"description\": \"Game console\",\n  \"sku\": \"PS5-001\",\n  \"priceAmount\": 29999,\n  \"priceCurrency\": \"TRY\",\n  \"categoryId\": \"{{category_id}}\"\n}"
             },
-            "url": "{{catalog_base}}/api/catalog/products/"
+            "url": "{{catalog_base}}/api/catalog/products/",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Get Product By ID",
           "request": {
             "method": "GET",
-            "url": "{{catalog_base}}/api/catalog/products/{{product_id}}"
+            "url": "{{catalog_base}}/api/catalog/products/{{product_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -181,7 +271,17 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"Sony PlayStation 5 Slim\",\n  \"description\": \"Updated model\",\n  \"sku\": \"PS5-001\",\n  \"priceAmount\": 28999,\n  \"priceCurrency\": \"TRY\",\n  \"categoryId\": \"{{category_id}}\"\n}"
             },
-            "url": "{{catalog_base}}/api/catalog/products/{{product_id}}"
+            "url": "{{catalog_base}}/api/catalog/products/{{product_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -198,14 +298,34 @@
               "mode": "raw",
               "raw": "{\n  \"ratingAverage\": 4.6,\n  \"ratingCount\": 120\n}"
             },
-            "url": "{{catalog_base}}/api/catalog/products/{{product_id}}/review-stats"
+            "url": "{{catalog_base}}/api/catalog/products/{{product_id}}/review-stats",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Delete Product",
           "request": {
             "method": "DELETE",
-            "url": "{{catalog_base}}/api/catalog/products/{{product_id}}"
+            "url": "{{catalog_base}}/api/catalog/products/{{product_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         }
       ]
@@ -230,7 +350,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{cart_base}}/api/cart/"
+            "url": "{{cart_base}}/api/cart/",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -251,7 +381,17 @@
               "mode": "raw",
               "raw": "{\n  \"productId\": \"{{product_id}}\",\n  \"productName\": \"Sony PlayStation 5\",\n  \"unitPrice\": 29999,\n  \"currency\": \"TRY\",\n  \"quantity\": 1\n}"
             },
-            "url": "{{cart_base}}/api/cart/items/"
+            "url": "{{cart_base}}/api/cart/items/",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -272,7 +412,17 @@
               "mode": "raw",
               "raw": "{\n  \"quantity\": 2\n}"
             },
-            "url": "{{cart_base}}/api/cart/items/{{cart_item_id}}"
+            "url": "{{cart_base}}/api/cart/items/{{cart_item_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -285,7 +435,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{cart_base}}/api/cart/items/{{cart_item_id}}"
+            "url": "{{cart_base}}/api/cart/items/{{cart_item_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -298,7 +458,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{cart_base}}/api/cart/"
+            "url": "{{cart_base}}/api/cart/",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -319,7 +489,17 @@
               "mode": "raw",
               "raw": "{\n  \"guestBuyerId\": \"{{guest_id}}\"\n}"
             },
-            "url": "{{cart_base}}/api/cart/merge"
+            "url": "{{cart_base}}/api/cart/merge",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         }
       ]
@@ -352,7 +532,17 @@
               "mode": "raw",
               "raw": "{\n  \"paymentMethodId\": \"pm_demo_1\",\n  \"shippingAddress\": {\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"street\": \"Street 1\",\n    \"city\": \"Istanbul\",\n    \"country\": \"TR\",\n    \"zipCode\": \"34000\"\n  },\n  \"billingAddress\": {\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"street\": \"Street 1\",\n    \"city\": \"Istanbul\",\n    \"country\": \"TR\",\n    \"zipCode\": \"34000\"\n  }\n}"
             },
-            "url": "{{ordering_base}}/api/ordering/checkout"
+            "url": "{{ordering_base}}/api/ordering/checkout",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -365,7 +555,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{ordering_base}}/api/ordering/orders/?page=1&pageSize=10"
+            "url": "{{ordering_base}}/api/ordering/orders/?page=1&pageSize=10",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -378,7 +578,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{ordering_base}}/api/ordering/orders/{{order_id}}"
+            "url": "{{ordering_base}}/api/ordering/orders/{{order_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -399,7 +609,17 @@
               "mode": "raw",
               "raw": "{\n  \"reason\": \"Customer requested cancellation\"\n}"
             },
-            "url": "{{ordering_base}}/api/ordering/orders/{{order_id}}/cancel"
+            "url": "{{ordering_base}}/api/ordering/orders/{{order_id}}/cancel",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -416,7 +636,17 @@
               "mode": "raw",
               "raw": "{\n  \"success\": true,\n  \"failureReason\": \"\"\n}"
             },
-            "url": "{{ordering_base}}/api/ordering/orders/{{order_id}}/pay"
+            "url": "{{ordering_base}}/api/ordering/orders/{{order_id}}/pay",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         }
       ]
@@ -435,7 +665,17 @@
           "name": "Get Stock By Product",
           "request": {
             "method": "GET",
-            "url": "{{inventory_base}}/api/inventory/stock/{{product_id}}"
+            "url": "{{inventory_base}}/api/inventory/stock/{{product_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -456,7 +696,17 @@
               "mode": "raw",
               "raw": "{\n  \"adjustmentType\": 1,\n  \"quantity\": 50,\n  \"reason\": \"Initial load\"\n}"
             },
-            "url": "{{inventory_base}}/api/inventory/stock/{{product_id}}/adjust"
+            "url": "{{inventory_base}}/api/inventory/stock/{{product_id}}/adjust",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -473,7 +723,17 @@
               "mode": "raw",
               "raw": "{\n  \"productIds\": [\n    \"{{product_id}}\"\n  ]\n}"
             },
-            "url": "{{inventory_base}}/api/inventory/stock/levels"
+            "url": "{{inventory_base}}/api/inventory/stock/levels",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         }
       ]
@@ -498,7 +758,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{profiles_base}}/api/profiles/me/"
+            "url": "{{profiles_base}}/api/profiles/me/",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -519,7 +789,17 @@
               "mode": "raw",
               "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"phone\": \"+905551112233\"\n}"
             },
-            "url": "{{profiles_base}}/api/profiles/me/"
+            "url": "{{profiles_base}}/api/profiles/me/",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -542,7 +822,17 @@
                 }
               ]
             },
-            "url": "{{profiles_base}}/api/profiles/me/avatar"
+            "url": "{{profiles_base}}/api/profiles/me/avatar",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -555,7 +845,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{profiles_base}}/api/profiles/me/avatar"
+            "url": "{{profiles_base}}/api/profiles/me/avatar",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -576,7 +876,17 @@
               "mode": "raw",
               "raw": "{\n  \"title\": \"Home\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"line1\": \"Street 1\",\n  \"city\": \"Istanbul\",\n  \"country\": \"TR\",\n  \"postalCode\": \"34000\"\n}"
             },
-            "url": "{{profiles_base}}/api/profiles/me/addresses"
+            "url": "{{profiles_base}}/api/profiles/me/addresses",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -597,7 +907,17 @@
               "mode": "raw",
               "raw": "{\n  \"title\": \"Office\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"line1\": \"Street 2\",\n  \"city\": \"Istanbul\",\n  \"country\": \"TR\",\n  \"postalCode\": \"34000\"\n}"
             },
-            "url": "{{profiles_base}}/api/profiles/me/addresses/{{address_id}}"
+            "url": "{{profiles_base}}/api/profiles/me/addresses/{{address_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -610,7 +930,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{profiles_base}}/api/profiles/me/addresses/{{address_id}}"
+            "url": "{{profiles_base}}/api/profiles/me/addresses/{{address_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -623,7 +953,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{profiles_base}}/api/profiles/me/addresses/{{address_id}}/default"
+            "url": "{{profiles_base}}/api/profiles/me/addresses/{{address_id}}/default",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         }
       ]
@@ -642,7 +982,17 @@
           "name": "List Reviews By Product",
           "request": {
             "method": "GET",
-            "url": "{{reviews_base}}/api/reviews/products/{{product_id}}/?page=1&pageSize=10"
+            "url": "{{reviews_base}}/api/reviews/products/{{product_id}}/?page=1&pageSize=10",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -655,7 +1005,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{reviews_base}}/api/reviews/products/{{product_id}}/mine"
+            "url": "{{reviews_base}}/api/reviews/products/{{product_id}}/mine",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -668,7 +1028,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{reviews_base}}/api/reviews/products/{{product_id}}/can-review"
+            "url": "{{reviews_base}}/api/reviews/products/{{product_id}}/can-review",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -689,7 +1059,17 @@
               "mode": "raw",
               "raw": "{\n  \"rating\": 5,\n  \"text\": \"Great product\"\n}"
             },
-            "url": "{{reviews_base}}/api/reviews/products/{{product_id}}/"
+            "url": "{{reviews_base}}/api/reviews/products/{{product_id}}/",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -710,7 +1090,17 @@
               "mode": "raw",
               "raw": "{\n  \"rating\": 4,\n  \"text\": \"Updated comment\"\n}"
             },
-            "url": "{{reviews_base}}/api/reviews/{{review_id}}"
+            "url": "{{reviews_base}}/api/reviews/{{review_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -723,7 +1113,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{reviews_base}}/api/reviews/{{review_id}}"
+            "url": "{{reviews_base}}/api/reviews/{{review_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         }
       ]
@@ -748,7 +1148,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{wishlists_base}}/api/wishlist/"
+            "url": "{{wishlists_base}}/api/wishlist/",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -761,7 +1171,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{wishlists_base}}/api/wishlist/count"
+            "url": "{{wishlists_base}}/api/wishlist/count",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -774,7 +1194,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{wishlists_base}}/api/wishlist/product-ids"
+            "url": "{{wishlists_base}}/api/wishlist/product-ids",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -787,7 +1217,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{wishlists_base}}/api/wishlist/{{product_id}}"
+            "url": "{{wishlists_base}}/api/wishlist/{{product_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -800,7 +1240,17 @@
                 "value": "{{user_id}}"
               }
             ],
-            "url": "{{wishlists_base}}/api/wishlist/{{product_id}}"
+            "url": "{{wishlists_base}}/api/wishlist/{{product_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         }
       ]
@@ -829,21 +1279,51 @@
               "mode": "raw",
               "raw": "{\n  \"code\": \"WELCOME10\",\n  \"name\": \"Welcome Discount\",\n  \"description\": \"First order discount\",\n  \"discountType\": 1,\n  \"discountValue\": 10,\n  \"currency\": \"TRY\"\n}"
             },
-            "url": "{{coupons_base}}/api/coupons/"
+            "url": "{{coupons_base}}/api/coupons/",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
           "name": "List Coupons",
           "request": {
             "method": "GET",
-            "url": "{{coupons_base}}/api/coupons/?page=1&pageSize=20&isActive=true"
+            "url": "{{coupons_base}}/api/coupons/?page=1&pageSize=20&isActive=true",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Get Coupon By ID",
           "request": {
             "method": "GET",
-            "url": "{{coupons_base}}/api/coupons/{{coupon_id}}"
+            "url": "{{coupons_base}}/api/coupons/{{coupon_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -860,7 +1340,17 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"Welcome Discount Updated\",\n  \"description\": \"Updated description\",\n  \"discountType\": 1,\n  \"discountValue\": 15,\n  \"currency\": \"TRY\"\n}"
             },
-            "url": "{{coupons_base}}/api/coupons/{{coupon_id}}"
+            "url": "{{coupons_base}}/api/coupons/{{coupon_id}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -877,7 +1367,17 @@
               "mode": "raw",
               "raw": "{\n  \"isActive\": false\n}"
             },
-            "url": "{{coupons_base}}/api/coupons/{{coupon_id}}/status"
+            "url": "{{coupons_base}}/api/coupons/{{coupon_id}}/status",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -894,7 +1394,17 @@
               "mode": "raw",
               "raw": "{\n  \"code\": \"WELCOME10\",\n  \"cartTotal\": 500\n}"
             },
-            "url": "{{coupons_base}}/api/coupons/validate"
+            "url": "{{coupons_base}}/api/coupons/validate",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         }
       ]
@@ -923,7 +1433,17 @@
               "mode": "raw",
               "raw": "{\n  \"input\": {\n    \"method\": \"GET\",\n    \"role\": \"user\"\n  }\n}"
             },
-            "url": "{{opa_base}}/v1/data/ecommerce/authz/allow"
+            "url": "{{opa_base}}/v1/data/ecommerce/authz/allow",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         },
         {
@@ -940,7 +1460,17 @@
               "mode": "raw",
               "raw": "{\n  \"input\": {\n    \"method\": \"POST\",\n    \"role\": \"admin\"\n  }\n}"
             },
-            "url": "{{opa_base}}/v1/data/ecommerce/authz/allow"
+            "url": "{{opa_base}}/v1/data/ecommerce/authz/allow",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{gateway_auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
           }
         }
       ]

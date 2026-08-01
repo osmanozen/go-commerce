@@ -13,6 +13,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/logging"
 	bbmiddleware "github.com/osmanozen/go-commerce/src/pkg/buildingblocks/middleware"
 	wishlisthttp "github.com/osmanozen/go-commerce/src/services/wishlists/internal/adapters/http"
 	wishlistpersistence "github.com/osmanozen/go-commerce/src/services/wishlists/internal/adapters/persistence"
@@ -21,15 +22,18 @@ import (
 )
 
 func main() {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelInfo,
-	}))
-	slog.SetDefault(logger)
-
-	logger.Info("wishlists service starting", slog.String("version", "1.0.0"))
-
+	// ─── Configuration ──────────────────────────────────────────────────
 	port := envOrDefault("PORT", "8087")
 	databaseURL := envOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/go-commerce?sslmode=disable")
+	var kafkaBrokers []string
+	if brokersStr := os.Getenv("KAFKA_BROKERS"); brokersStr != "" {
+		kafkaBrokers = []string{brokersStr}
+	}
+
+	// ─── Logger ──────────────────────────────────────────────────────────
+	logger := logging.InitLogger("wishlists", kafkaBrokers)
+
+	logger.Info("wishlists service starting", slog.String("version", "1.0.0"))
 
 	ctx := context.Background()
 	poolCfg, err := pgxpool.ParseConfig(databaseURL)

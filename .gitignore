@@ -1,4 +1,5 @@
 .DS_Store
+**/logs/*
 
 # Go binaries and artifacts
 *.exe

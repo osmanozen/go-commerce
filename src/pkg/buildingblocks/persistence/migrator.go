@@ -3,12 +3,14 @@ package persistence
 import (
 	"context"
 	"embed"
+	"errors"
 	"fmt"
 	"io/fs"
 	"sort"
 	"strings"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -34,7 +36,14 @@ func RunEmbeddedMigrations(ctx context.Context, pool *pgxpool.Pool, opts Migrate
 			PRIMARY KEY (service_name, migration_name)
 		)
 	`); err != nil {
-		return 0, fmt.Errorf("ensure schema migrations table: %w", err)
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && (pgErr.Code == "42710" || pgErr.Code == "42P07" || pgErr.Code == "23505") {
+			// ignore concurrent creation error
+			// database per service oldugunda bu sorun olmayacak. tek bir db'de migration lock durumu icin koyuldu
+			// cozum: database per service VEYA schema bazli migration VEYA ayrı bir migration service olusturmak
+		} else {
+			return 0, fmt.Errorf("ensure schema migrations table: %w", err)
+		}
 	}
 
 	entries, err := fs.ReadDir(opts.Migrations, opts.Dir)

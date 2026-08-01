@@ -15,6 +15,7 @@ services:
       - --entrypoints.web.http.redirections.entrypoint.scheme=https
       - --entrypoints.websecure.address=:443
       - --ping=true
+      - --log.level=DEBUG
       - --experimental.plugins.jwt.modulename=github.com/traefik-plugins/traefik-jwt-plugin
       - --experimental.plugins.jwt.version=v0.7.1
     ports:
@@ -24,6 +25,9 @@ services:
     volumes:
       - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
       - ./traefik/certs:/etc/traefik/certs:ro
+    depends_on:
+      keycloak:
+        condition: service_healthy
 
   # OPA (Open Policy Agent)
   opa:
@@ -55,6 +59,12 @@ services:
     volumes:
       - ./keycloak/realms:/opt/keycloak/data/import:ro
       - keycloak_data:/opt/keycloak/data
+    healthcheck: # traefik waiting for this health check
+      test: [ "CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8080 && echo -e 'GET /auth/realms/go-commerce HTTP/1.1\\r\\nhost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'" ]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+      start_period: 10s
 
   # PostgreSQL
   postgres:
@@ -143,9 +153,46 @@ services:
       - azurite_data:/data
     command: "azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 -l /data"
 
+  # Elasticsearch (Logs DB)
+  elasticsearch:
+    image: elasticsearch:8.11.1
+    container_name: go-commerce-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  # Logstash (Kafka to Elasticsearch Shipper)
+  logstash:
+    image: logstash:8.11.1
+    container_name: go-commerce-logstash
+    volumes:
+      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+    depends_on:
+      elasticsearch:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+
+  # Kibana (Logs Dashboard)
+  kibana:
+    image: kibana:8.11.1
+    container_name: go-commerce-kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+      
 volumes:
   postgres_data:
   kafka_data:
   redis_data:
   azurite_data:
   keycloak_data:
+  elasticsearch_data:

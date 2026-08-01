@@ -13,6 +13,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/logging"
 	"github.com/osmanozen/go-commerce/src/pkg/buildingblocks/messaging"
 	bbmiddleware "github.com/osmanozen/go-commerce/src/pkg/buildingblocks/middleware"
 	cataloghttp "github.com/osmanozen/go-commerce/src/services/catalog/internal/adapters/http"
@@ -22,21 +23,18 @@ import (
 )
 
 func main() {
+	// ─── Configuration ──────────────────────────────────────────────────
+	port := envOrDefault("PORT", "8081")
+	kafkaBrokers := []string{envOrDefault("KAFKA_BROKERS", "localhost:9092")}
+	databaseURL := envOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/go-commerce?sslmode=disable")
+
 	// ─── Logger ──────────────────────────────────────────────────────────
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelInfo,
-	}))
-	slog.SetDefault(logger)
+	logger := logging.InitLogger("catalog", kafkaBrokers)
 
 	logger.Info("catalog service starting",
 		slog.String("version", "1.0.0"),
 		slog.String("go_version", "1.26.1"),
 	)
-
-	// ─── Configuration ──────────────────────────────────────────────────
-	port := envOrDefault("PORT", "8081")
-	kafkaBrokers := []string{envOrDefault("KAFKA_BROKERS", "localhost:9092")}
-	databaseURL := envOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/go-commerce?sslmode=disable")
 
 	// ─── Kafka Producer ─────────────────────────────────────────────────
 	kafkaCfg := messaging.DefaultKafkaProducerConfig(kafkaBrokers)
